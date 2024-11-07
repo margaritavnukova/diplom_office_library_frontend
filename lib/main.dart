@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'navigation.dart';
+import 'navigation/namedNavigation.dart';
 
 void main() {
-  runApp(const MainPage());
+  runApp(const MainPage2());
 
   //Log();
 }

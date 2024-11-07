@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'navigation.dart';
+
 void main() {
-  runApp(const MyApp());
+  runApp(const MainPage());
+
+  //Log();
 }
 
 class MyApp extends StatelessWidget {
@@ -122,4 +126,21 @@ class _MyHomePageState extends State<MyHomePage> {
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+}
+
+
+//5 lection
+
+void Log() {
+  int x = 20;
+    log(x);
+    x = 34;
+    log(x);
+    String name = "Tom";
+    log(name);
+}
+void log<T>(T a){
+     
+    // DateTime.now() - получает текущую дату и время
+    print("${DateTime.now()} a=$a");
 }

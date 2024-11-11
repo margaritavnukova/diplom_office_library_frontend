@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'BOOKCROSSING/bookcrossing_main.dart';
+import 'BOOKCROSSING/authorization.dart';
 
 void main() {
   runApp(
-    const MyHomePage()
+    const MyAuthorization()
   );
 }

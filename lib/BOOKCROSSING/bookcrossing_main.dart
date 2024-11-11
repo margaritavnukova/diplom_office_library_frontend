@@ -1,55 +1,68 @@
 import 'package:flutter/material.dart';
 
 import 'homepage_body.dart';
+import 'authorization.dart';
+import 'books.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class MyMainPage extends StatefulWidget {
+  const MyMainPage({super.key});
 
   @override
-  MyHomePageState createState() {
-    return MyHomePageState();
+  MyMainPageState createState() {
+    return MyMainPageState();
   }
 }
 
-class MyHomePageState extends State<MyHomePage> {
+class MyMainPageState extends State<MyMainPage> {
+
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.purpleAccent,
+      ), 
 
-      //navigation
-      initialRoute: '/',
-      routes: {
-        '/home_body': (context) => const MyHomePageBody(),
-        //'/page2': (context) => const Page2(),
-      },  
+    body: IndexedStack(
+      index: _selectedIndex,
+      children: const [
+        MyHomePageBody(),
+        MyBooks(),
+        MyAuthorization(),
+        MyAuthorization(),
+      ],
+    ),
 
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.purpleAccent,
-        ), 
-        body: const MyHomePageBody(
-
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          fixedColor: Colors.deepPurple,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.book),
-              label: 'Books',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.messenger),
-              label: 'Help',
-            ),
-          ],
-        ),
+      bottomNavigationBar: BottomNavigationBar(
+        fixedColor: Colors.deepPurple,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: "Profile",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book),
+            label: "Your books",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.qr_code),
+            label: "Read QR-code",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.messenger),
+            label: "Get assistance",
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
     );
   }
 }
-

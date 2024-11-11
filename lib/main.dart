@@ -1,30 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'form.dart';
+import 'BOOKCROSSING/bookcrossing_main.dart';
 
 void main() {
   runApp(
-    const MaterialApp(
-      home: Scaffold(
-        body: MyCustomForm()
-      )
-    )
+    const MyHomePage()
   );
-  //Log();
-}
-
-//5 lection
-
-void Log() {
-  int x = 20;
-    log(x);
-    x = 34;
-    log(x);
-    String name = "Tom";
-    log(name);
-}
-void log<T>(T a){
-     
-    // DateTime.now() - получает текущую дату и время
-    print("${DateTime.now()} a=$a");
 }

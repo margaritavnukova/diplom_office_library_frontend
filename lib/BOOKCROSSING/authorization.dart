@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/BOOKCROSSING/bookcrossing_main.dart';
 
 class MyAuthorization extends StatefulWidget{
-  const MyAuthorization({ super.key});
+  const MyAuthorization({super.key});
 
   @override
   _MyAuthorization createState() => _MyAuthorization();
 }
 
 class _MyAuthorization extends State<MyAuthorization>{
-
-  final _formKey = GlobalKey<FormState>();
+  late String role;
+  final formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class _MyAuthorization extends State<MyAuthorization>{
   return MaterialApp(
     home: Scaffold(
       body: Builder(builder: (context) {return Center(child: Form(
-        key: _formKey,
+        key: formKey,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -32,6 +32,8 @@ class _MyAuthorization extends State<MyAuthorization>{
                   if (value == null || value.isEmpty) {
                     return 'Please enter some text';
                   }
+                  role = value;
+                  print(role);
                   return null;
                 },
               ),
@@ -60,16 +62,16 @@ class _MyAuthorization extends State<MyAuthorization>{
                 onPressed: () {
                   print("Click 1");
                   //Validate returns true if the form is valid, or false otherwise.
-                  if (_formKey.currentState!.validate()) {
+                  if (formKey.currentState!.validate()) {
                     // If the form is valid, display a snackbar. In the real world,
                     // you'd often call a server or save the information in a database.
 
-                    print("Click!");
+                    print("Click 2");
 
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => 
-                        const MyMainPage()
+                        MyMainPage(role: role)
                       )
                     );
                   }

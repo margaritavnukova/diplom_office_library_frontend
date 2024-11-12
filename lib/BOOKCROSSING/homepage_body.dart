@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'login_info_class.dart';
+import 'inherited_widget.dart';
+
 class MyHomePageBody extends StatefulWidget{
-  const MyHomePageBody({ super.key});
+  final LoginInfo? login;
+  const MyHomePageBody({super.key, this.login});
 
   @override
   _CounterState createState() => _CounterState();
@@ -9,18 +13,15 @@ class MyHomePageBody extends StatefulWidget{
 
 class _CounterState extends State<MyHomePageBody>{
  
-  int value = 0;
- 
   @override
   Widget build(BuildContext context) {
  
     return Align(
       alignment: Alignment.center, 
-      child: ElevatedButton(
-        child: Text("Value: $value", style: TextStyle(fontSize: 22)),
-        onPressed:(){ setState(() {
-          value++;
-        });}
+      child: Column(
+        children: [
+          SizedBox(child: Image.asset("assets/$MyInheritedWidget.of(context).login?.pfp")),
+        ],
       )
     );
   }

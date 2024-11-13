@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
 import 'homepage_body.dart';
-import 'authorization.dart';
 import 'inherited_widget.dart';
 import 'books.dart';
+import 'login_info_class.dart';
+import 'qrcode_page.dart';
 
 class MyMainPage extends StatefulWidget {
-  final String? name;
-  const MyMainPage({super.key, this.name});
+  final LoginInfo? login;
+  const MyMainPage({super.key, this.login});
 
   @override
   MyMainPageState createState() {
@@ -32,33 +33,36 @@ class MyMainPageState extends State<MyMainPage> {
         backgroundColor: Colors.purpleAccent,
       ), 
 
-    body: IndexedStack(
+    body: MyInheritedWidget( 
+      child: IndexedStack(
         index: _selectedIndex,
         children: const [
           MyHomePageBody(),
           MyBooks(),
-          MyAuthorization(),
+          MyQrCodePage(),
           MyBooks()
         ],
       ),
+    ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color.fromARGB(255, 53, 41, 85),
         fixedColor: Colors.deepPurple,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: "Profile",
+            label: "Профиль",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.book),
-            label: "Your books",
+            label: "Ваши книги",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.qr_code),
-            label: "Read QR-code",
+            label: "Добавить книгу через QR-код",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.queue),
-            label: "Books' queue",
+            label: "Очередь на книги",
           ),
         ],
         currentIndex: _selectedIndex,

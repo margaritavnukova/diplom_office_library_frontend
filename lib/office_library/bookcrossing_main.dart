@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'homepage_body.dart';
 import 'inherited_widget.dart';
-import 'books.dart';
 import 'login_info_class.dart';
+import 'package:office_library_backend/book_list_page.dart';
 import 'qrcode_page.dart';
 
 class MyMainPage extends StatefulWidget {
@@ -38,9 +38,9 @@ class MyMainPageState extends State<MyMainPage> {
         index: _selectedIndex,
         children: const [
           MyHomePageBody(),
-          MyBooks(),
+          BookList(),
           MyQrCodePage(),
-          MyBooks()
+          BookList()
         ],
       ),
     ),

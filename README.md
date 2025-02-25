@@ -1,6 +1,6 @@
 # office_library_frontend
 
-Фронт проекта margaritavnukova/diplom_office_library_backend
+Фронт проекта github.com/margaritavnukova/diplom_office_library_backend
 
 ## О чем этот проект?
 

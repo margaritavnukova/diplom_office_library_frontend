@@ -63,23 +63,37 @@ class _CounterState extends State<BookList> {
 
   Future<List<Book>> fetchBooks() async {
   final response = await http.get(
-    Uri.parse('https://www.cbr.ru/scripts/XML_daily.asp?date_req=02/03/2002'),
-    headers: {'Accept-Charset': 'ascii'}
+    // Uri.parse('https://www.cbr.ru/scripts/XML_daily.asp?date_req=02/03/2002'),
+    Uri.parse('https://localhost:44319/api/Book'),
+    // headers: {'Accept-Charset': 'utf-8'}
     );
 
   print('response: ${response.statusCode}');
 
 
   if (response.statusCode == 200) {
-    final document = xml.XmlDocument.parse(response.body);
-    final books = document.findAllElements('Valute');
+    // final decodedData = utf8.decode(latin1.encode(response.body));
+
+    final startPoint = response.body.indexOf('?');
+    final responsePart = response.body.substring(startPoint - 1, response.body.length - 1);
+    var editedResponse = responsePart.replaceAll("\\r\\n", "");
+
+    editedResponse = editedResponse.replaceAll(" xmlns:xsd=\\\"http://www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http://www.w3.org/2001/XMLSchema-instance\\\"", "");
+    // editedResponse = editedResponse.replaceAll("</ArrayOfBooksDto>", "");
+    editedResponse = editedResponse.replaceAll(" xmlns=\\\"https://localhost:44319\\\"", "");
+    editedResponse = editedResponse.replaceAll(" <Readers />", "");
+    
+    print('cut resp = $editedResponse');
+
+    final document = xml.XmlDocument.parse(editedResponse);
+    final books = document.findAllElements('BooksDto');
 
     // List<Book> returnBooks = [];
 
     return books.map((node) {
          return Book(
-          node.findElements('Name').single.text,
-          node.findElements('Value').single.text,
+          node.findElements('Title').single.text,
+          node.findElements('Year').single.text,
           );
        }).toList();
      } else {

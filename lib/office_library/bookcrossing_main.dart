@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'homepage_body.dart';
 import 'inherited_widget.dart';
 import 'login_info_class.dart';
-import 'package:office_library_backend/book_list_page.dart';
+import 'package:office_library_backend/office_library/book_list_page.dart';
 import 'qrcode_page.dart';
 
 class MyMainPage extends StatefulWidget {

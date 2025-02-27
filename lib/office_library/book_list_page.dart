@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:office_library_backend/office_library/book_class.dart';
 import 'package:http/http.dart' as http;
-import 'package:xml/xml.dart' as xml;
+import 'dart:convert';
 
 class BookList extends StatefulWidget{
   const BookList({super.key});
@@ -47,8 +47,8 @@ class _CounterState extends State<BookList> {
                     itemCount: books.length,
                     itemBuilder: (context, index) {
                       return ListTile(
-                        title: Text(books[index].Title),
-                        subtitle: Text(books[index].Author),
+                        title: Text(books[index].title!),
+                        subtitle: Text(books[index].author!),
                       );
                     },
                   );
@@ -63,40 +63,22 @@ class _CounterState extends State<BookList> {
 
   Future<List<Book>> fetchBooks() async {
   final response = await http.get(
-    // Uri.parse('https://www.cbr.ru/scripts/XML_daily.asp?date_req=02/03/2002'),
     Uri.parse('https://localhost:44319/api/Book'),
-    // headers: {'Accept-Charset': 'utf-8'}
     );
 
   print('response: ${response.statusCode}');
 
 
   if (response.statusCode == 200) {
-    // final decodedData = utf8.decode(latin1.encode(response.body));
+    final respStr = response.body.replaceAll("\"[", "[").replaceAll("]\"", "]").replaceAll("\\", "");
+    print('resp = $respStr');
+    List<dynamic> jsonResponse = json.decode(respStr);
+    List<Book> books = jsonResponse.map((bookJson) => Book.fromJson(bookJson)).toList();
 
-    final startPoint = response.body.indexOf('?');
-    final responsePart = response.body.substring(startPoint - 1, response.body.length - 1);
-    var editedResponse = responsePart.replaceAll("\\r\\n", "");
-
-    editedResponse = editedResponse.replaceAll(" xmlns:xsd=\\\"http://www.w3.org/2001/XMLSchema\\\" xmlns:xsi=\\\"http://www.w3.org/2001/XMLSchema-instance\\\"", "");
-    // editedResponse = editedResponse.replaceAll("</ArrayOfBooksDto>", "");
-    editedResponse = editedResponse.replaceAll(" xmlns=\\\"https://localhost:44319\\\"", "");
-    editedResponse = editedResponse.replaceAll(" <Readers />", "");
-    
-    print('cut resp = $editedResponse');
-
-    final document = xml.XmlDocument.parse(editedResponse);
-    final books = document.findAllElements('BooksDto');
-
-    // List<Book> returnBooks = [];
-
-    return books.map((node) {
-         return Book(
-          node.findElements('Title').single.text,
-          node.findElements('Year').single.text,
-          );
-       }).toList();
-     } else {
+    return books;
+     
+     } 
+     else {
        throw Exception('Failed to load items');
      }
   }

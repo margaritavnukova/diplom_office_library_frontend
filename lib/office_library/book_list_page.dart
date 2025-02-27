@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:office_library_backend/office_library/book_class.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'single_book_page.dart';
 
 class BookList extends StatefulWidget{
   const BookList({super.key});
@@ -45,12 +46,29 @@ class _CounterState extends State<BookList> {
 
                   return ListView.builder(
                     itemCount: books.length,
+
                     itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(books[index].title!),
-                        subtitle: Text(books[index].author!),
+                      return GestureDetector(
+                        onDoubleTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BookDetailPage(book: books[index]),
+                            ),
+                          );
+                        },
+                        child: ListTile(
+                          title: Text(books[index].title!),
+                          subtitle: Text(books[index].author!),
+                        ),
                       );
-                    },
+                    }
+                    // itemBuilder: (context, index) {
+                    //   return ListTile(
+                    //     title: Text(books[index].title!),
+                    //     subtitle: Text(books[index].author!),
+                    //   );
+                    // },
                   );
                 }
               },

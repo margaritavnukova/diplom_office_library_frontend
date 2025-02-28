@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'bookcrossing_main.dart';
-import 'login_info_class.dart';
-import 'inherited_widget.dart';
+import '../classes/login_info_class.dart';
+import '../inherited_widget.dart';
 
 class MyAuthorization extends StatefulWidget{
   const MyAuthorization({super.key});

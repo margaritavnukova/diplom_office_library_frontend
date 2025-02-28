@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'login_info_class.dart';
+import 'classes/login_info_class.dart';
 
 class MyInheritedWidget extends InheritedWidget {
   final LoginInfo? login;

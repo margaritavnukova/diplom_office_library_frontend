@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:office_library_backend/office_library/book_class.dart';
+import 'package:office_library_backend/office_library/classes/book_class.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'single_book_page.dart';
@@ -58,17 +58,11 @@ class _CounterState extends State<BookList> {
                           );
                         },
                         child: ListTile(
-                          title: Text(books[index].title!),
-                          subtitle: Text(books[index].author!),
+                          title: Text(books[index].title),
+                          subtitle: Text(books[index].author),
                         ),
                       );
                     }
-                    // itemBuilder: (context, index) {
-                    //   return ListTile(
-                    //     title: Text(books[index].title!),
-                    //     subtitle: Text(books[index].author!),
-                    //   );
-                    // },
                   );
                 }
               },

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'login_info_class.dart';
-import 'inherited_widget.dart';
+import '../classes/login_info_class.dart';
+import '../inherited_widget.dart';
 
 class MyHomePageBody extends StatefulWidget{
   final LoginInfo? login;

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:office_library_backend/office_library/classes/book_class.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import '../classes/reader_class.dart';
 
 class BookDetailPage extends StatelessWidget {
   final Book book;
+  final noReadersException = "No readers yet";
 
   const BookDetailPage({super.key, required this.book});
 
@@ -49,9 +49,14 @@ class BookDetailPage extends StatelessWidget {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 8),
-                for (var reader in book.readers)
-                  Text(reader.email),
-              ],
+                if (book.readers.isNotEmpty)
+                  for (var reader in book.readers) 
+                    if (reader is Map) 
+                      Text(
+                        reader['Email'] ?? 'Email is missing', 
+                        style: TextStyle(fontSize: 16),
+                        )
+                ],
             ),
 
             // Text(

@@ -7,18 +7,7 @@ class Book {
   final String title;
   final String genre;
   final DateTime year;
-  final List<Reader> readers;
-  List<dynamic>? readersStrList;
-
-  Book.str({
-    required this.id,
-    required this.author,
-    required this.title,
-    required this.genre,
-    required this.year,
-    required this.readers,
-    this.readersStrList,
-  });
+  final List<dynamic> readers;
 
   Book({
     required this.id,
@@ -30,23 +19,13 @@ class Book {
   });
 
   factory Book.fromJson(Map<String, dynamic> json) {
-    var readersTemp = json['Readers'];
-    List<dynamic> readersStrListTemp = [];
-    if (readersTemp != null && readersTemp.isNotEmpty) {
-      for (var reader in readersTemp) {
-        String userName = reader['UserName'];
-        readersStrListTemp.add('UserName: $userName');
-      }
-    }
-
-    return Book.str(
+    return Book(
       id: json['Id'],
       author: json['Author'],
       title: json['Title'],
       genre: json['Genre'],
       year: DateTime.parse(json['Year']),
       readers: json['Readers'],
-      readersStrList: readersStrListTemp,
     );
   }
 }

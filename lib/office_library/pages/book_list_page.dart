@@ -3,6 +3,7 @@ import 'package:office_library_backend/office_library/classes/book_class.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'single_book_page.dart';
+import '../classes/strings.dart';
 
 class BookList extends StatefulWidget{
   const BookList({super.key});
@@ -18,7 +19,7 @@ class _CounterState extends State<BookList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('XML Data'),
+        title: Text('Книги'),
       ),
       body: Column(
         children: [
@@ -74,8 +75,9 @@ class _CounterState extends State<BookList> {
   }
 
   Future<List<Book>> fetchBooks() async {
+  
   final response = await http.get(
-    Uri.parse('https://localhost:44319/api/Book'),
+    Uri.parse(UriStrings.getBookUri),
     );
 
   print('response: ${response.statusCode}');

@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 
 import 'homepage_body.dart';
-import '../inherited_widget.dart';
-import '../classes/login_info_class.dart';
 import 'package:office_library_backend/office_library/pages/book_list_page.dart';
 import 'qrcode_page.dart';
 
 class MyMainPage extends StatefulWidget {
-  final LoginInfo? login;
-  const MyMainPage({super.key, this.login});
+  const MyMainPage({super.key});
 
   @override
   MyMainPageState createState() {
@@ -33,7 +30,7 @@ class MyMainPageState extends State<MyMainPage> {
         backgroundColor: Colors.purpleAccent,
       ), 
 
-    body: MyInheritedWidget( 
+    body: Center( 
       child: IndexedStack(
         index: _selectedIndex,
         children: const [

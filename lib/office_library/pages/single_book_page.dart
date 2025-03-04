@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:office_library_backend/office_library/classes/book_class.dart';
+import 'package:office_library_backend/office_library/classes/strings.dart';
 import '../classes/reader_class.dart';
 
 class BookDetailPage extends StatelessWidget {
@@ -53,36 +54,11 @@ class BookDetailPage extends StatelessWidget {
                   for (var reader in book.readers) 
                     if (reader is Map) 
                       Text(
-                        reader['Email'] ?? 'Email is missing', 
+                        reader[UserJsonKeys.email] ?? 'Email is missing', 
                         style: TextStyle(fontSize: 16),
                         )
                 ],
             ),
-
-            // Text(
-            //   'Readers: ${book.readersStrList}',
-            //   style: TextStyle(fontSize: 18),
-            // ),
-
-            // ListView.builder(
-            //   itemCount: book.readers.length,
-            //   itemBuilder: (context, index) {
-                // return GestureDetector(
-                //   onDoubleTap: () {
-                //     Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //         builder: (context) => BookDetailPage(readers: [index]),
-                //       ),
-                //     );
-                //   },
-
-                  // return ListTile(
-                  //   title: Text(book.readers[index].id.toString()),
-                  //   subtitle: Text(book.readers[index].email),
-                  // );
-              // }
-            // )
           ],
         ),
       ),

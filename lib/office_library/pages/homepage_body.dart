@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../classes/login_info_class.dart';
-import '../inherited_widget.dart';
-
 class MyHomePageBody extends StatefulWidget{
-  final LoginInfo? login;
-  const MyHomePageBody({super.key, this.login});
+  const MyHomePageBody({super.key});
 
   @override
   _CounterState createState() => _CounterState();
@@ -16,13 +12,9 @@ class _CounterState extends State<MyHomePageBody>{
   @override
   Widget build(BuildContext innerContext) {
     
-    print(MyInheritedWidget.of(innerContext).login);
-    
     return Container(
       padding: const EdgeInsets.all(20),
       margin: const EdgeInsets.all(20),
-      // child: Align(
-      //   alignment: Alignment.center, 
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -54,7 +46,6 @@ class _CounterState extends State<MyHomePageBody>{
             )
           ],
         )
-      //)
     );
   }
 }

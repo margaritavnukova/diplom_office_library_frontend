@@ -1,7 +1,10 @@
 class UriStrings {
   static final address = 'localhost:44319';
 
-  static final getBookUri = 'https://$address/api/Book';
+  static final getBooksUri = 'https://$address/api/Book';
+  static final getBooksByReaderUri = 'https://$address/api/Book/GetBooksByReader?reader=';
+
+  static final getOneUserByEmailUri = 'https://$address/api/User/GetUserByEmail?email=';
 
   static final registerUri = 'https://$address/Account/Register';
   static final loginUri = 'https://$address/Account/Login';

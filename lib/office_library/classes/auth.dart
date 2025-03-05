@@ -4,10 +4,13 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 import 'strings.dart';
+import 'reader_class.dart';
+import 'fetch_data.dart';
 
 class Auth {
     late Dio dio;
     late PersistCookieJar cookieJar;
+    static late Reader user;
 
     Auth() {
         dio = Dio();
@@ -21,7 +24,7 @@ class Auth {
         dio.interceptors.add(CookieManager(cookieJar));
     }
 
-    Future<void> login(String email, String password) async {
+    Future<Response<dynamic>> login(String email, String password) async {
         try {
             final response = await dio.post(
                 UriStrings.loginUri,
@@ -30,6 +33,11 @@ class Auth {
 
             if (response.statusCode == 200) {
                 print('login success');
+
+                var fetchData = FetchData<Reader>(Reader.fromJson);
+                user = await fetchData.fetchOne(UriStrings.getOneUserByEmailUri + email);
+
+                return response;
             }
             else {
                 throw Exception(MyExceptions.loginException);

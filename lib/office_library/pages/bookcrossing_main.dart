@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 
-import 'homepage_body.dart';
-import 'package:office_library_backend/office_library/pages/book_list_page.dart';
+import 'user_profile_page.dart';
+import '../classes/strings.dart';
+import 'book_list_page_base.dart';
 import 'qrcode_page.dart';
+import '../classes/reader_class.dart';
+import '../classes/auth.dart';
 
 class MyMainPage extends StatefulWidget {
-  const MyMainPage({super.key});
+  final Reader reader;
+  const MyMainPage({super.key, required this.reader});
 
   @override
   MyMainPageState createState() {
@@ -33,11 +37,13 @@ class MyMainPageState extends State<MyMainPage> {
     body: Center( 
       child: IndexedStack(
         index: _selectedIndex,
-        children: const [
-          MyHomePageBody(),
-          BookList(),
+        children: [
+          UserProfilePage(reader: widget.reader),
+          // single user books
+          BookList(uri: UriStrings.getBooksByReaderUri + Auth.user.email),
           MyQrCodePage(),
-          BookList()
+          // all book in lib
+          BookList(uri: UriStrings.getBooksUri)
         ],
       ),
     ),

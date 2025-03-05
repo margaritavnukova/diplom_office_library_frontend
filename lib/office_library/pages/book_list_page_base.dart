@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:office_library_backend/office_library/classes/book_class.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'single_book_page.dart';
-import '../classes/strings.dart';
+import 'book_page_single.dart';
+import '../classes/fetch_data.dart';
 
 class BookList extends StatefulWidget{
-  const BookList({super.key});
+  final uri;
+  BookList({super.key, required this.uri});
 
   @override
   _CounterState createState() => _CounterState();
@@ -26,8 +25,10 @@ class _CounterState extends State<BookList> {
           ElevatedButton(
             onPressed: () {
               // При нажатии кнопки загружаем данные
-              setState(() {
-                _futureBooks = fetchBooks(); // Инициализация загрузки данных
+              setState(() async {
+                var fetchData = FetchData<Book>(Book.fromJson);
+                var books = fetchData.fetchList(widget.uri);
+                _futureBooks = await Future.value(books);
               });
             },
             child: Text('Загрузить данные'),
@@ -74,26 +75,5 @@ class _CounterState extends State<BookList> {
     );
   }
 
-  Future<List<Book>> fetchBooks() async {
   
-  final response = await http.get(
-    Uri.parse(UriStrings.getBookUri),
-    );
-
-  print('response: ${response.statusCode}');
-
-
-  if (response.statusCode == 200) {
-    final respStr = response.body.replaceAll("\"[", "[").replaceAll("]\"", "]").replaceAll("\\", "");
-    print('resp = $respStr');
-    List<dynamic> jsonResponse = json.decode(respStr);
-    List<Book> books = jsonResponse.map((bookJson) => Book.fromJson(bookJson)).toList();
-
-    return books;
-     
-     } 
-     else {
-       throw Exception('Failed to load items');
-     }
-  }
 }

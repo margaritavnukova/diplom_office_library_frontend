@@ -1,27 +1,32 @@
 // import 'package:flutter/material.dart';
 import 'book_class.dart';
+import 'item_base_class.dart';
 
-class Reader {
+class Reader implements Item {
   final String email;
-  final String fullName;
   final String password;
+  final String? phone;
+  final String? fullName;
   final Book? books;
 
   Reader({
     required this.email,
-    required this.fullName,
     required this.password,
+    this.phone,
+    this.fullName,
     this.books,
   });
-
+  
+  @override
   factory Reader.fromJson(Map<String, dynamic> json) {
     return Reader(
       email: json['Email'],
-      fullName: json['FullName'],
       password: json['Password'],
+      phone: json['Phone'],
+      fullName: json['FullName'],
       books: json['Books'],
     );
   }
 
-  Map<String, dynamic> toJson() => {'Email': email, 'FullName': fullName, 'Password': password, 'Books': books};
+  Map<String, dynamic> toJson() => {'Email': email, 'Password': password,  'Phone': phone, 'FullName': fullName, 'Books': books};
 }

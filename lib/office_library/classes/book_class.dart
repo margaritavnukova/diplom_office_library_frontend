@@ -1,7 +1,6 @@
-// import 'package:flutter/material.dart';
-import 'reader_class.dart';
+import 'item_base_class.dart';
 
-class Book {
+class Book implements Item {
   final int id;
   final String author;
   final String title;
@@ -18,6 +17,7 @@ class Book {
     required this.readers,
   });
 
+  @override
   factory Book.fromJson(Map<String, dynamic> json) {
     return Book(
       id: json['Id'],
@@ -28,6 +28,8 @@ class Book {
       readers: json['Readers'],
     );
   }
+
+  // static Future<List<Book>>? fetch() {}
 }
 
 //   Map<String, dynamic> toJson() => {'Title': title, 'Author': author};

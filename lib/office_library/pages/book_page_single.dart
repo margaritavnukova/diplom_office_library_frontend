@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:office_library_backend/office_library/classes/book_class.dart';
-import 'package:office_library_backend/office_library/classes/strings.dart';
-import '../classes/reader_class.dart';
+import '../classes/book_class.dart';
+import '../classes/strings.dart';
 
 class BookDetailPage extends StatelessWidget {
   final Book book;

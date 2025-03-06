@@ -29,4 +29,5 @@ class Reader implements Item {
   }
 
   Map<String, dynamic> toJson() => {'Email': email, 'Password': password,  'Phone': phone, 'FullName': fullName, 'Books': books};
+  String toJsonStr() => toJson.toString();
 }

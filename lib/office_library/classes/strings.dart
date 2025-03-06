@@ -1,14 +1,14 @@
 class UriStrings {
-  static final address = 'localhost:44319';
+  static const address = 'localhost:44319';
 
-  static final getBooksUri = 'https://$address/api/Book';
-  static final getBooksByReaderUri = 'https://$address/api/Book/GetBooksByReader?reader=';
+  static const getBooksUri = 'https://$address/api/Book/GetAll';
+  static const getBooksByReaderUri = 'https://$address/api/Book/GetByReader/';
 
-  static final getOneUserByEmailUri = 'https://$address/api/User/GetUserByEmail?email=';
+  static const getOneUserByEmailUri = 'https://$address/api/User/GetByEmail/';
 
-  static final registerUri = 'https://$address/Account/Register';
-  static final loginUri = 'https://$address/Account/Login';
-  static final logoutUri = 'https://$address/Account/LogOff';
+  static const registerUri = 'https://$address/Account/Register';
+  static const loginUri = 'https://$address/Account/Login';
+  static const logoutUri = 'https://$address/Account/LogOff';
 }
 
 class MyStrings {

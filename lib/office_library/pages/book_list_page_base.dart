@@ -27,6 +27,7 @@ class _CounterState extends State<BookList> {
               // При нажатии кнопки загружаем данные
               setState(() async {
                 var fetchData = FetchData<Book>(Book.fromJson);
+                // разница здесь
                 var books = fetchData.fetchList(widget.uri);
                 _futureBooks = await Future.value(books);
               });

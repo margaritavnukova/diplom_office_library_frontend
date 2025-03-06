@@ -34,8 +34,9 @@ class Auth {
             if (response.statusCode == 200) {
                 print('login success');
 
+                var editedEmail = email.replaceAll('.', '-');
                 var fetchData = FetchData<Reader>(Reader.fromJson);
-                user = await fetchData.fetchOne(UriStrings.getOneUserByEmailUri + email);
+                user = await fetchData.fetchOne(UriStrings.getOneUserByEmailUri + editedEmail);
 
                 return response;
             }
@@ -43,7 +44,7 @@ class Auth {
                 throw Exception(MyExceptions.loginException);
             }
         }
-        catch (e) {
+        catch(e) {
             throw Exception('${MyExceptions.loginException}: $e'); 
         }
     }

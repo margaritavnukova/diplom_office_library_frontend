@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:path/path.dart';
 import '../classes/item_base_class.dart';
 
 class FetchData<T extends Item> {

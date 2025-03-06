@@ -16,6 +16,12 @@ class _MyAuthorization extends State<MyAuthorization>{
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final Auth apiService = Auth();
+  final emailSuffix = "@mail.com";
+
+  @override
+  void initState() {
+    emailController.addListener(_onTextChanged);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,12 +40,10 @@ class _MyAuthorization extends State<MyAuthorization>{
 
                   var readerReturned = Auth.user;
 
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) =>
-                      MyMainPage(reader: readerReturned)
-                    )
-                  );
+                  Navigator.pushReplacement(
+                    context, 
+                    MaterialPageRoute(builder: (context) => MyMainPage(reader: readerReturned)),
+                    );
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
                 }
@@ -50,5 +54,16 @@ class _MyAuthorization extends State<MyAuthorization>{
         ),
       ),
     );
+  }
+
+  void _onTextChanged() {
+    final text = emailController.text;
+    if (!text.endsWith(emailSuffix)){
+      final newText = text + emailSuffix;
+      emailController.value = TextEditingValue(
+        text: newText,
+        selection: TextSelection.collapsed(offset: text.length)
+      );
+    }
   }
 }

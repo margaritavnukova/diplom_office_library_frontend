@@ -3,7 +3,7 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
-import 'strings.dart';
+import '../assets/strings.dart';
 import 'reader_class.dart';
 import 'fetch_data.dart';
 

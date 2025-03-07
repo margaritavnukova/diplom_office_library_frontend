@@ -1,36 +1,51 @@
 import 'item_base_class.dart';
+import '../assets/strings.dart';
 
 class Book implements Item {
-  final int id;
   final String author;
   final String title;
   final String genre;
   final DateTime year;
   final List<dynamic> readers;
+  final bool isTaken;
+  final DateTime? dateOfReturning;
+  final int? takingCount;
 
   Book({
-    required this.id,
     required this.author,
     required this.title,
     required this.genre,
     required this.year,
     required this.readers,
+    required this.isTaken,
+    this.dateOfReturning,
+    this.takingCount
   });
 
   @override
   factory Book.fromJson(Map<String, dynamic> json) {
     return Book(
-      id: json['Id'],
-      author: json['Author'],
-      title: json['Title'],
-      genre: json['Genre'],
-      year: DateTime.parse(json['Year']),
-      readers: json['Readers'],
+      author: json[BookJsonKeys.author],
+      title: json[BookJsonKeys.title],
+      genre: json[BookJsonKeys.genre],
+      year: DateTime.parse(json[BookJsonKeys.year]),
+      readers: json[BookJsonKeys.readers],
+      isTaken: json[BookJsonKeys.isTaken],
+      dateOfReturning: json[BookJsonKeys.dateOfReturning],
+      takingCount: json[BookJsonKeys.takingCount],
     );
   }
 
-  // static Future<List<Book>>? fetch() {}
-}
+  Map<String, dynamic> toJson() => {
+    BookJsonKeys.author: author, 
+    BookJsonKeys.title: title, 
+    BookJsonKeys.genre: genre, 
+    BookJsonKeys.year: year.toString(),
+    BookJsonKeys.readers: readers,
+    BookJsonKeys.isTaken: isTaken,
+    BookJsonKeys.dateOfReturning: dateOfReturning,
+    BookJsonKeys.takingCount: takingCount,
+    };
 
-//   Map<String, dynamic> toJson() => {'Title': title, 'Author': author};
-// }
+  String toJsonStr() => toJson.toString();
+}

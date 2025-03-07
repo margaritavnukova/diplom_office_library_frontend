@@ -8,6 +8,8 @@ class FetchData<T extends Item> {
 
   Future<List<T>> fetchList(String uri) async {
   
+    uri = uri.replaceAll('.', '-');
+
     final response = await http.get(
       Uri.parse(uri),
       );

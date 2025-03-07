@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'user_profile_page.dart';
-import '../classes/strings.dart';
+import '../assets/strings.dart';
 import 'book_list_page_base.dart';
 import 'qrcode_page.dart';
 import 'authorization_page.dart';

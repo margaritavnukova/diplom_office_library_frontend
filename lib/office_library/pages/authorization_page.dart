@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'bookcrossing_main.dart';
 import '../classes/auth.dart';
-import '../classes/strings.dart';
+import '../assets/strings.dart';
 import '../classes/reader_class.dart';
 import '../classes/fetch_data.dart';
 

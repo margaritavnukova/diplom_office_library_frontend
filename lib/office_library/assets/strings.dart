@@ -28,7 +28,11 @@ class MyExceptions {
 class UserJsonKeys {
   static const email = 'Email';
   static const password = 'Password';
-  static const fullName = 'FullName';
+  static const phoneNumber = 'PhoneNumber';
+  static const userName = 'UserName';
+  static const role = 'Role';
+  static const registrationDate = 'RegistrationDate';
+  static const photo = 'PhotoBase64';
   static const books = 'Books';
 }
 
@@ -39,4 +43,7 @@ class BookJsonKeys {
   static const genre = 'Genre';
   static const year = 'Year';
   static const readers = 'Readers';
+  static const isTaken = 'IsTaken';
+  static const dateOfReturning = 'DateOfReturning';
+  static const takingCount = 'TakingCount';
 }

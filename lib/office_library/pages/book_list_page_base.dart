@@ -4,7 +4,7 @@ import 'book_page_single.dart';
 import '../classes/fetch_data.dart';
 
 class BookList extends StatefulWidget{
-  final uri;
+  final String uri;
   BookList({super.key, required this.uri});
 
   @override

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:office_library_backend/office_library/classes/book_class.dart';
+import 'book_page_add.dart';
 import 'book_page_single.dart';
 import '../classes/fetch_data.dart';
 
@@ -34,6 +35,17 @@ class _CounterState extends State<BookList> {
             },
             child: Text('Загрузить данные'),
           ),
+
+          ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AddBookPage()),
+                  );
+                },
+                child: Text('Добавить новую книгу'),
+              ),
+
           Expanded(
             child: FutureBuilder<List<Book>>(
               future: _futureBooks,

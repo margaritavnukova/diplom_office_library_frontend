@@ -3,4 +3,9 @@ abstract class Item {
   // TODO: implement fromJson
   throw UnimplementedError();
   }
+  
+  Map<String, dynamic> toJson() {
+  // TODO: implement fromJson
+  throw UnimplementedError();
+  }
 }

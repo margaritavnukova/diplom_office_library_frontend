@@ -19,7 +19,7 @@ class Book implements Item {
     required this.readers,
     required this.isTaken,
     this.dateOfReturning,
-    this.takingCount
+    this.takingCount,
   });
 
   @override
@@ -31,21 +31,22 @@ class Book implements Item {
       year: DateTime.parse(json[BookJsonKeys.year]),
       readers: json[BookJsonKeys.readers],
       isTaken: json[BookJsonKeys.isTaken],
-      dateOfReturning: json[BookJsonKeys.dateOfReturning],
+      dateOfReturning: json[BookJsonKeys.dateOfReturning] != null
+          ? DateTime.parse(json[BookJsonKeys.dateOfReturning])
+          : null,
       takingCount: json[BookJsonKeys.takingCount],
     );
   }
 
-  Map<String, dynamic> toJson() => {
-    BookJsonKeys.author: author, 
-    BookJsonKeys.title: title, 
-    BookJsonKeys.genre: genre, 
-    BookJsonKeys.year: year.toString(),
-    BookJsonKeys.readers: readers,
-    BookJsonKeys.isTaken: isTaken,
-    BookJsonKeys.dateOfReturning: dateOfReturning,
-    BookJsonKeys.takingCount: takingCount,
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      BookJsonKeys.author: author,
+      BookJsonKeys.title: title,
+      BookJsonKeys.genre: genre,
+      BookJsonKeys.year: year.toIso8601String(), // toIso8601String для корректного формата
     };
+  }
 
-  String toJsonStr() => toJson.toString();
+  String toJsonStr() => toJson().toString(); 
 }

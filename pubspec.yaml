@@ -15,7 +15,7 @@ dependencies:
   cookie_jar: ^4.0.0
   path_provider: ^2.1.5
   path: ^1.9.0
-  xml: ^6.5.0
+  mask_text_input_formatter: ^2.0.0
   flutter:
     sdk: flutter
 
@@ -31,4 +31,4 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/images/null_user_photo.png
+    # - assets/images/null_user_photo.png

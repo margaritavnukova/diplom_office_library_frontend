@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import '../assets/strings.dart';
 import '../classes/book_class.dart';
 import '../classes/post_data.dart';
 
@@ -66,7 +67,6 @@ class _AddBookPageState extends State<AddBookPage> {
               ),
               keyboardType: TextInputType.number, // Цифровая клавиатура
             ),
-            ),
             // Здесь можно добавить функционал для выбора/загрузки фото
             ElevatedButton(
               onPressed: () {
@@ -76,8 +76,9 @@ class _AddBookPageState extends State<AddBookPage> {
                 String genre = _selectedGenre!;
                 String year = _yearController.text;
 
-                Book book = new Book(title: title, author: author, genre: genre, year: DateTime.parse(year), readers: [], isTaken: false);
-                final postData = PostData<Book>(book.toJson);
+                Book book = Book(title: title, author: author, genre: genre, year: DateTime.parse(year), readers: [], isTaken: false);
+                final postData = PostData<Book>();
+                postData.postItem(UriStrings.postBookUri, book);
 
                 Navigator.pop(context);
               },

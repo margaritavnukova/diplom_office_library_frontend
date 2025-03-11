@@ -2,6 +2,7 @@ import 'item_base_class.dart';
 import '../assets/strings.dart';
 
 class Book implements Item {
+  final int? id;
   final String author;
   final String title;
   final String genre;
@@ -12,6 +13,7 @@ class Book implements Item {
   final int? takingCount;
 
   Book({
+    this.id = 0,
     required this.author,
     required this.title,
     required this.genre,
@@ -25,6 +27,7 @@ class Book implements Item {
   @override
   factory Book.fromJson(Map<String, dynamic> json) {
     return Book(
+      id: json[BookJsonKeys.id],
       author: json[BookJsonKeys.author],
       title: json[BookJsonKeys.title],
       genre: json[BookJsonKeys.genre],
@@ -41,6 +44,7 @@ class Book implements Item {
   @override
   Map<String, dynamic> toJson() {
     return {
+      BookJsonKeys.id: id,
       BookJsonKeys.author: author,
       BookJsonKeys.title: title,
       BookJsonKeys.genre: genre,

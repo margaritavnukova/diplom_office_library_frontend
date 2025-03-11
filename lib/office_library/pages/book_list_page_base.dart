@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:office_library_backend/office_library/classes/book_class.dart';
+import '../assets/strings.dart';
+import '../classes/put_data.dart';
 import 'book_page_add.dart';
+import 'book_page_edit.dart';
 import 'book_page_single.dart';
 import '../classes/fetch_data.dart';
 
@@ -64,13 +67,23 @@ class _CounterState extends State<BookList> {
 
                     itemBuilder: (context, index) {
                       return GestureDetector(
-                        onDoubleTap: () {
-                          Navigator.push(
+                        onDoubleTap: () async {
+                           final updatedBookData = await Navigator.push<Book>(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => BookDetailPage(book: books[index]),
+                              builder: (context) => EditBookPage(book: books[index]),
                             ),
                           );
+                          if (updatedBookData != null) {
+                            books[index] = updatedBookData;
+
+                            var putData = PutData<Book>(Book.fromJson);
+                            // разница здесь
+                            putData.putItem(UriStrings.putBookUri, updatedBookData.id ?? 0, updatedBookData);
+
+                            // Здесь можно добавить логику для обновления UI
+                            print('Обновленные данные книги: $updatedBookData');
+                          }
                         },
                         child: ListTile(
                           title: Text(books[index].title),

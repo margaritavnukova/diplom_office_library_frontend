@@ -6,9 +6,9 @@ class FetchData<T extends Item> {
   final T Function(Map<String, dynamic>) fromJson;
   FetchData(this.fromJson);
 
-  Future<List<T>> fetchList(String uri) async {
+  Future<List<T>> fetchList(String baseUri) async {
   
-    uri = uri.replaceAll('.', '-');
+    final uri = baseUri.replaceAll('.', '-');
 
     final response = await http.get(
       Uri.parse(uri),

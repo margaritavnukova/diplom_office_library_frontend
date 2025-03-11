@@ -1,14 +1,19 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../classes/item_base_class.dart'; // Предполагается, что у вас есть базовый класс Item
+import 'package:path/path.dart';
+import '../classes/item_base_class.dart'; 
 
-class PostData<T extends Item> {
+class PutData<T extends Item> {
+  final T Function(Map<String, dynamic>) fromJson;
+  PutData(this.fromJson);
+
   // Функция для добавления нового элемента 
-  Future<void> postItem(String baseUri, T item) async {
-    final uri = baseUri.replaceAll('.', '-');
+  Future<void> putItem(String baseUri, int id, T item) async {
+    final uri = join(baseUri, id.toString());
 
     // Преобразуем объект в JSON
-    final response = await http.post(
+    // final itemJson = item.toJson();
+    final response = await http.put(
       Uri.parse(uri),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
@@ -19,7 +24,7 @@ class PostData<T extends Item> {
     print('response: ${response.statusCode}');
 
     if (response.statusCode == 201 || response.statusCode == 200) {
-      print('Item added successfully');
+      print('Item edited successfully');
     } else {
       throw Exception('Failed to add item: ${response.body}');
     }

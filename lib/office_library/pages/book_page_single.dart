@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../classes/book_class.dart';
 import '../assets/strings.dart';
+import 'book_page_edit.dart';
 
 class BookDetailPage extends StatelessWidget {
   final Book book;
@@ -58,6 +59,25 @@ class BookDetailPage extends StatelessWidget {
                         )
                 ],
             ),
+
+            ElevatedButton(
+              onPressed:  () async {
+                final updatedBookData = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditBookPage(book: book),
+                  ),
+                );
+
+                // Обновление данных книги после редактирования
+                if (updatedBookData != null) {
+                  //updateUI(updatedBookData);
+                  // Здесь можно добавить логику для обновления UI
+                  print('Обновленные данные книги: $updatedBookData');
+                }
+              }, 
+              child: Text("Редактировать книгу")
+            )
           ],
         ),
       ),

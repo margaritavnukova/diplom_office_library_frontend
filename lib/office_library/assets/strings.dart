@@ -1,14 +1,18 @@
 class UriStrings {
-  static const address = 'localhost:44319';
+  static const address = 'https://localhost:44319';
 
-  static const getBooksUri = 'https://$address/api/Book/GetAll';
-  static const getBooksByReaderUri = 'https://$address/api/Book/GetByReader/';
+  static const getBooksUri = '$address/api/Book/GetAll';
+  static const getBooksByReaderUri = '$address/api/Book/GetByReader/';
 
-  static const getOneUserByEmailUri = 'https://$address/api/User/GetByEmail/';
+  static const postBookUri = '$address/api/Book/Post';
+  static const putBookUri = '$address/api/Book/Put/';
+  static const deleteBookUri = '$address/api/Book/Delete/';
 
-  static const registerUri = 'https://$address/Account/Register';
-  static const loginUri = 'https://$address/Account/Login';
-  static const logoutUri = 'https://$address/Account/LogOff';
+  static const getOneUserByEmailUri = '$address/api/User/GetByEmail/';
+
+  static const registerUri = '$address/Account/Register';
+  static const loginUri = '$address/Account/Login';
+  static const logoutUri = '$address/Account/LogOff';
 }
 
 class MyStrings {

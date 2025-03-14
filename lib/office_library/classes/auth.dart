@@ -77,4 +77,8 @@ class Auth {
             throw Exception('${MyExceptions.logoutException}: $e'); 
         }
     }
+
+  static bool hasRole(String role) {
+    return user.role == role;
+  }
 }

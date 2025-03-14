@@ -8,7 +8,7 @@ class PutData<T extends Item> {
   PutData(this.fromJson);
 
   // Функция для добавления нового элемента 
-  Future<void> putItem(String baseUri, int id, T item) async {
+  Future<void> putItem(String baseUri, String id, T item) async {
     final uri = join(baseUri, id.toString());
 
     // Преобразуем объект в JSON

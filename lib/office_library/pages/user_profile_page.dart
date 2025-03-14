@@ -32,7 +32,7 @@ class UserProfilePage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Имя: ${reader.userName}',
+                        'Имя: ${reader.name ?? "Нет данных об имени"}',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -132,6 +132,6 @@ class UserProfilePage extends StatelessWidget {
 
 Future<List<Book>> fetchBooks(String email) async {
   var fetchData = FetchData<Book>(Book.fromJson);
-  var books = fetchData.fetchList(UriStrings.getBooksByReaderUri + email);
+  var books = fetchData.fetchList(UriStrings.addControllerName(UriStrings.getBooksByReaderUri + email, 'Book'));
   return books;
 }

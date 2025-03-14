@@ -7,7 +7,7 @@ class DeleteData<T extends Item> {
   DeleteData(this.fromJson);
 
   // Функция для добавления нового элемента 
-  Future<void> deleteItem(String baseUri, int id) async {
+  Future<void> deleteItem(String baseUri, String id) async {
     final uri = join(baseUri, id.toString());
 
     final response = await http.delete(

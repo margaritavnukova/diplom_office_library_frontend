@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:office_library_backend/office_library/classes/book_class.dart';
 import '../assets/strings.dart';
+import '../classes/auth.dart';
 import '../classes/put_data.dart';
 import 'book_page_add.dart';
 import 'book_page_edit.dart';
-import 'book_page_single.dart';
 import '../classes/fetch_data.dart';
 
-class BookList extends StatefulWidget{
+class BookList extends StatefulWidget {
   final String uri;
   BookList({super.key, required this.uri});
 
@@ -18,6 +18,25 @@ class BookList extends StatefulWidget{
 class _CounterState extends State<BookList> {
   Future<List<Book>>? _futureBooks; // Храним результаты Future
 
+  // Метод для загрузки данных
+  void _loadData() async {
+    setState(() {
+      _futureBooks = null; // Сбрасываем Future, чтобы показать индикатор загрузки
+    });
+
+    try {
+      var fetchData = FetchData<Book>(Book.fromJson);
+      var books = await fetchData.fetchList(UriStrings.addControllerName(widget.uri, 'Book')); // Ждем завершения запроса
+      setState(() {
+        _futureBooks = Future.value(books); // Обновляем Future
+      });
+    } catch (e) {
+      setState(() {
+        _futureBooks = Future.error(e); // Обрабатываем ошибку
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,27 +46,20 @@ class _CounterState extends State<BookList> {
       body: Column(
         children: [
           ElevatedButton(
-            onPressed: () {
-              // При нажатии кнопки загружаем данные
-              setState(() async {
-                var fetchData = FetchData<Book>(Book.fromJson);
-                // разница здесь
-                var books = fetchData.fetchList(widget.uri);
-                _futureBooks = await Future.value(books);
-              });
-            },
+            onPressed: _loadData, // Используем метод _loadData
             child: Text('Загрузить данные'),
           ),
 
-          ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AddBookPage()),
-                  );
-                },
-                child: Text('Добавить новую книгу'),
-              ),
+          if (Auth.hasRole('Admin') || Auth.hasRole('Manager')) // Исправлено условие
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddBookPage()),
+                );
+              },
+              child: Text('Добавить новую книгу'),
+            ),
 
           Expanded(
             child: FutureBuilder<List<Book>>(
@@ -64,33 +76,32 @@ class _CounterState extends State<BookList> {
 
                   return ListView.builder(
                     itemCount: books.length,
-
                     itemBuilder: (context, index) {
                       return GestureDetector(
                         onDoubleTap: () async {
-                           final updatedBookData = await Navigator.push<Book>(
+                          final updatedBookData = await Navigator.push<Book>(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => EditBookPage(book: books[index]),
+                              builder: (context) => AddBookPage(book: books[index]),
                             ),
                           );
                           if (updatedBookData != null) {
-                            books[index] = updatedBookData;
+                            setState(() {
+                              books[index] = updatedBookData;
+                            });
 
                             var putData = PutData<Book>(Book.fromJson);
-                            // разница здесь
-                            putData.putItem(UriStrings.putBookUri, updatedBookData.id ?? 0, updatedBookData);
+                            putData.putItem(UriStrings.addControllerName(UriStrings.putByIdUri, 'Book'), updatedBookData.id ?? "", updatedBookData);
 
-                            // Здесь можно добавить логику для обновления UI
                             print('Обновленные данные книги: $updatedBookData');
                           }
                         },
                         child: ListTile(
-                          title: Text(books[index].title),
+                          title: Text(books[index].name ?? "Нет названия"),
                           subtitle: Text(books[index].author),
                         ),
                       );
-                    }
+                    },
                   );
                 }
               },
@@ -100,6 +111,4 @@ class _CounterState extends State<BookList> {
       ),
     );
   }
-
-  
 }

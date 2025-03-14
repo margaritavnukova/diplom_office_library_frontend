@@ -59,7 +59,8 @@ class MyMainPageState extends State<MyMainPage> {
           BookList(uri: UriStrings.getBooksByReaderUri + Auth.user.email.replaceAll('.', '-')),
           MyQrCodePage(),
           // all book in lib
-          BookList(uri: UriStrings.getBooksUri)
+          if (Auth.hasRole('Admin') || Auth.hasRole('Manager'))
+            BookList(uri: UriStrings.addControllerName(UriStrings.getUri, 'Book'))
         ],
       ),
     ),

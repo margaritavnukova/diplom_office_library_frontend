@@ -2,9 +2,11 @@ import 'item_base_class.dart';
 import '../assets/strings.dart';
 
 class Book implements Item {
-  final int? id;
+  @override 
+  String? id;
   final String author;
-  final String title;
+  @override 
+  String? name;
   final String genre;
   final DateTime year;
   final List<dynamic> readers;
@@ -13,9 +15,9 @@ class Book implements Item {
   final int? takingCount;
 
   Book({
-    this.id = 0,
+    this.id = "",
     required this.author,
-    required this.title,
+    required this.name,
     required this.genre,
     required this.year,
     required this.readers,
@@ -29,7 +31,7 @@ class Book implements Item {
     return Book(
       id: json[BookJsonKeys.id],
       author: json[BookJsonKeys.author],
-      title: json[BookJsonKeys.title],
+      name: json[BookJsonKeys.title],
       genre: json[BookJsonKeys.genre],
       year: DateTime.parse(json[BookJsonKeys.year]),
       readers: json[BookJsonKeys.readers],
@@ -46,11 +48,11 @@ class Book implements Item {
     return {
       BookJsonKeys.id: id,
       BookJsonKeys.author: author,
-      BookJsonKeys.title: title,
+      BookJsonKeys.title: name,
       BookJsonKeys.genre: genre,
       BookJsonKeys.year: year.toIso8601String(), // toIso8601String для корректного формата
     };
   }
 
-  String toJsonStr() => toJson().toString(); 
+  String toJsonStr() => toJson().toString();
 }

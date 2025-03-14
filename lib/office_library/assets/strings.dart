@@ -1,18 +1,20 @@
 class UriStrings {
   static const address = 'https://localhost:44319';
 
-  static const getBooksUri = '$address/api/Book/GetAll';
   static const getBooksByReaderUri = '$address/api/Book/GetByReader/';
-
-  static const postBookUri = '$address/api/Book/Post';
-  static const putBookUri = '$address/api/Book/Put/';
-  static const deleteBookUri = '$address/api/Book/Delete/';
-
   static const getOneUserByEmailUri = '$address/api/User/GetByEmail/';
+
+  static const getUri = '$address/api/[controllerName]/GetAll';
+  static const getOneByIdUri = '$address/api/[controllerName]/GetOne/';
+  static const postUri = '$address/api/[controllerName]/Post';
+  static const putByIdUri = '$address/api/[controllerName]/Put/';
+  static const deleteByIdUri = '$address/api/[controllerName]/Delete/';
 
   static const registerUri = '$address/Account/Register';
   static const loginUri = '$address/Account/Login';
   static const logoutUri = '$address/Account/LogOff';
+
+  static addControllerName(String uri, String controllerName) { return uri.replaceAll('[controllerName]', controllerName); }
 }
 
 class MyStrings {
@@ -30,6 +32,7 @@ class MyExceptions {
 }
 
 class UserJsonKeys {
+  static const id = 'Id';
   static const email = 'Email';
   static const password = 'Password';
   static const phoneNumber = 'PhoneNumber';
@@ -50,4 +53,17 @@ class BookJsonKeys {
   static const isTaken = 'IsTaken';
   static const dateOfReturning = 'DateOfReturning';
   static const takingCount = 'TakingCount';
+}
+
+class GenreJsonKeys {
+  static const id = 'Id';
+  static const name = 'Name';
+  static const description = 'Description';
+}
+
+class AuthorJsonKeys {
+  static const id = 'Id';
+  static const name = 'Name';
+  static const lifetime = 'LifeTime';
+  static const country = 'Country';
 }

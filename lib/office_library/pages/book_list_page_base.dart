@@ -4,7 +4,6 @@ import '../assets/strings.dart';
 import '../classes/auth.dart';
 import '../classes/put_data.dart';
 import 'book_page_add.dart';
-import 'book_page_edit.dart';
 import '../classes/fetch_data.dart';
 
 class BookList extends StatefulWidget {
@@ -91,7 +90,7 @@ class _CounterState extends State<BookList> {
                             });
 
                             var putData = PutData<Book>(Book.fromJson);
-                            putData.putItem(UriStrings.addControllerName(UriStrings.putByIdUri, 'Book'), updatedBookData.id ?? "", updatedBookData);
+                            putData.putItem(UriStrings.addControllerName(UriStrings.putByIdUri, 'Book'), updatedBookData);
 
                             print('Обновленные данные книги: $updatedBookData');
                           }

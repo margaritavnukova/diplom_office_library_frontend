@@ -7,8 +7,8 @@ class UriStrings {
   static const getUri = '$address/api/[controllerName]/GetAll';
   static const getOneByIdUri = '$address/api/[controllerName]/GetOne/';
   static const postUri = '$address/api/[controllerName]/Post';
-  static const putByIdUri = '$address/api/[controllerName]/Put/';
-  static const deleteByIdUri = '$address/api/[controllerName]/Delete/';
+  static const putByIdUri = '$address/api/[controllerName]/Put';
+  static const deleteByIdUri = '$address/api/[controllerName]/Delete';
 
   static const registerUri = '$address/Account/Register';
   static const loginUri = '$address/Account/Login';

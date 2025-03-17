@@ -3,10 +3,12 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import '../assets/strings.dart';
 import '../classes/author_class.dart';
 import '../classes/book_class.dart';
+import '../classes/delete_data.dart';
 import '../classes/fetch_data.dart';
 import '../classes/genre_class.dart';
 import '../classes/item_base_class.dart';
 import '../classes/post_data.dart';
+import '../classes/put_data.dart';
 import 'item_dropdown.dart';
 
 class AddBookPage extends StatefulWidget {
@@ -65,11 +67,11 @@ class _AddBookPageState extends State<AddBookPage> {
                 Genre.fromJson, // Фабричный метод для Genre
               ),
               onItemSelected: (Genre? genre) {
-                setState(() {
+                // setState(() {
                   _selectedGenre = genre;
-                });
+                // });
               },
-              label: 'Жанр',
+              label: widget.book?.genre ?? 'Жанр',
             ),
             SizedBox(height: 20),
             GenericDropdown<Author>(
@@ -78,11 +80,11 @@ class _AddBookPageState extends State<AddBookPage> {
                 Author.fromJson, // Фабричный метод для Author
               ),
               onItemSelected: (Author? author) {
-                setState(() {
+                // setState(() {
                   _selectedAuthor = author;
-                });
+                // });
               },
-              label: 'Автор',
+              label: widget.book?.author ?? 'Автор',
             ),
             
             TextField(
@@ -100,17 +102,44 @@ class _AddBookPageState extends State<AddBookPage> {
               onPressed: () {
                 // Логика для сохранения книги
                 String title = _titleController.text;
-                String author = _selectedAuthor?.name ?? "Нет автора";
-                String genre = _selectedGenre?.name ?? "Нет имени";
+                String author = _selectedAuthor?.name ?? widget.book?.author ?? "Нет автора";
+                String genre = _selectedGenre?.name ?? widget.book?.genre ?? "Нет имени";
                 String year = _yearController.text;
 
-                Book book = Book(name: title, author: author, genre: genre, year: DateTime.parse(year), readers: [], isTaken: false);
-                final postData = PostData<Book>();
-                postData.postItem(UriStrings.addControllerName(UriStrings.postUri, 'Book'), book);
+                Book book = Book(
+                  id: widget.book?.id ?? '-1', 
+                  name: title, 
+                  author: author, 
+                  genre: genre, 
+                  year: DateTime.parse(year), 
+                  readers: widget.book?.readers ?? [], 
+                  isTaken: widget.book?.isTaken ?? false,
+                  takingCount: widget.book?.takingCount ?? 0,
+                  dateOfReturning: widget.book?.dateOfReturning);
+                if (widget.book == null) {
+                  post(book);
+                } else {
+                  put(book);
+                }
 
                 Navigator.pop(context);
               },
               child: Text('Сохранить книгу'),
+            ),
+
+            ElevatedButton(
+              onPressed: () {
+                // Логика для сохранения книги
+
+                if (widget.book == null) {
+                  // post(book);
+                } else {
+                  delete(widget.book!);
+                }
+
+                Navigator.pop(context);
+              },
+              child: Text('Удалить книгу'),
             ),
           ],
         ),
@@ -126,5 +155,20 @@ class _AddBookPageState extends State<AddBookPage> {
     } catch (e) {
       throw Exception('Ошибка загрузки данных: $e');
     }
+  }
+
+  void put(Book book){
+    final putData = PutData<Book>(Book.fromJson);
+    putData.putItem(UriStrings.addControllerName(UriStrings.putByIdUri, 'Book'), book);
+  }
+
+  void post(Book book){
+    final postData = PostData<Book>();
+    postData.postItem(UriStrings.addControllerName(UriStrings.postUri, 'Book'), book);
+  }
+
+  void delete(Book book){
+    final deleteData = DeleteData<Book>(Book.fromJson);
+    deleteData.deleteItem(UriStrings.addControllerName(UriStrings.deleteByIdUri, 'Book'), book.id!);
   }
 }

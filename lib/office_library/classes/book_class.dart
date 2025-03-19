@@ -1,5 +1,7 @@
 import 'item_base_class.dart';
 import '../assets/strings.dart';
+import 'post_data.dart';
+import 'reader_class.dart';
 
 class Book implements Item {
   @override 
@@ -13,6 +15,7 @@ class Book implements Item {
   final bool isTaken;
   final DateTime? dateOfReturning;
   final int? takingCount;
+  final Reader? currentReader;
 
   Book({
     this.id = "",
@@ -24,6 +27,7 @@ class Book implements Item {
     required this.isTaken,
     this.dateOfReturning,
     this.takingCount,
+    this.currentReader
   });
 
   @override
@@ -40,6 +44,9 @@ class Book implements Item {
           ? DateTime.parse(json[BookJsonKeys.dateOfReturning])
           : null,
       takingCount: json[BookJsonKeys.takingCount],
+      currentReader: json[BookJsonKeys.currentReader] != null
+        ? Reader.fromJson(json[BookJsonKeys.currentReader])
+        : null
     );
   }
 
@@ -55,4 +62,23 @@ class Book implements Item {
   }
 
   String toJsonStr() => toJson().toString();
+
+  Book takeBook(Reader reader, DateTime returnDate) {
+    readers.add(reader);
+
+    Book book = Book(
+      id: id,
+      author: author,
+      name: name,
+      genre: genre,
+      year: year,
+      readers: readers,
+      isTaken: true,
+      dateOfReturning: returnDate,
+      takingCount: takingCount ?? 1,
+      currentReader: reader
+    );
+
+    return book;
+  }
 }

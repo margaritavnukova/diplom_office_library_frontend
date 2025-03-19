@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import '../assets/strings.dart';
+import '../classes/auth.dart';
 import '../classes/author_class.dart';
 import '../classes/book_class.dart';
 import '../classes/delete_data.dart';
@@ -10,6 +11,7 @@ import '../classes/item_base_class.dart';
 import '../classes/post_data.dart';
 import '../classes/put_data.dart';
 import 'item_dropdown.dart';
+import 'take_book_page.dart';
 
 class AddBookPage extends StatefulWidget {
   final Book? book;
@@ -50,43 +52,64 @@ class _AddBookPageState extends State<AddBookPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Добавить новую книгу'),
+        title: Text('Информация о книге'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextField(
-              controller: _titleController,
-              decoration: InputDecoration(labelText: 'Название книги'),
-            ),
-            
-            GenericDropdown<Genre>(
-              futureItems: _loadData<Genre>(
-                UriStrings.addControllerName(UriStrings.getUri, 'Genre'),
-                Genre.fromJson, // Фабричный метод для Genre
+            if (Auth.hasRole('Admin') || Auth.hasRole('Manager'))
+              TextField(
+                controller: _titleController,
+                decoration: InputDecoration(labelText: 'Название книги'),
               ),
-              onItemSelected: (Genre? genre) {
-                // setState(() {
-                  _selectedGenre = genre;
-                // });
-              },
-              label: widget.book?.genre ?? 'Жанр',
-            ),
+
+            if (Auth.hasRole('User'))
+             Text(
+              widget.book?.name ?? "Нет названия"
+             ),
+            
+            if (Auth.hasRole('Admin') || Auth.hasRole('Manager'))
+              GenericDropdown<Genre>(
+                futureItems: FetchData.loadData<Genre>(
+                  UriStrings.addControllerName(UriStrings.getUri, 'Genre'),
+                  Genre.fromJson, // Фабричный метод для Genre
+                ),
+                onItemSelected: (Genre? genre) {
+                  // setState(() {
+                    _selectedGenre = genre;
+                  // });
+                },
+                label: widget.book?.genre ?? 'Жанр',
+              ),
+            
+            if (Auth.hasRole('User'))
+              Text(
+                widget.book?.genre ?? "Нет жанра"
+              ),
+
             SizedBox(height: 20),
-            GenericDropdown<Author>(
-              futureItems: _loadData<Author>(
-                UriStrings.addControllerName(UriStrings.getUri, 'Author'),
-                Author.fromJson, // Фабричный метод для Author
-              ),
-              onItemSelected: (Author? author) {
-                // setState(() {
-                  _selectedAuthor = author;
-                // });
-              },
-              label: widget.book?.author ?? 'Автор',
-            ),
             
+            if (Auth.hasRole('Admin') || Auth.hasRole('Manager'))
+              GenericDropdown<Author>(
+                futureItems: FetchData.loadData<Author>(
+                  UriStrings.addControllerName(UriStrings.getUri, 'Author'),
+                  Author.fromJson, // Фабричный метод для Author
+                ),
+                onItemSelected: (Author? author) {
+                  // setState(() {
+                    _selectedAuthor = author;
+                  // });
+                },
+                label: widget.book?.author ?? 'Автор',
+              ),
+            
+            if (Auth.hasRole('User'))
+              Text(
+                widget.book?.author ?? "Нет автора"
+              ),
+
+            if (Auth.hasRole('Admin') || Auth.hasRole('Manager'))
             TextField(
               controller: _yearController,
               inputFormatters: [maskFormatter], // Применяем маску
@@ -97,64 +120,72 @@ class _AddBookPageState extends State<AddBookPage> {
               ),
               keyboardType: TextInputType.number, // Цифровая клавиатура
             ),
-            // Здесь можно добавить функционал для выбора/загрузки фото
-            ElevatedButton(
-              onPressed: () {
-                // Логика для сохранения книги
-                String title = _titleController.text;
-                String author = _selectedAuthor?.name ?? widget.book?.author ?? "Нет автора";
-                String genre = _selectedGenre?.name ?? widget.book?.genre ?? "Нет имени";
-                String year = _yearController.text;
 
-                Book book = Book(
-                  id: widget.book?.id ?? '-1', 
-                  name: title, 
-                  author: author, 
-                  genre: genre, 
-                  year: DateTime.parse(year), 
-                  readers: widget.book?.readers ?? [], 
-                  isTaken: widget.book?.isTaken ?? false,
-                  takingCount: widget.book?.takingCount ?? 0,
-                  dateOfReturning: widget.book?.dateOfReturning);
-                if (widget.book == null) {
-                  post(book);
-                } else {
-                  put(book);
-                }
+            if (Auth.hasRole('User'))
+             Text(
+              widget.book?.year.toString() ?? "Нет года"
+             ),
 
-                Navigator.pop(context);
-              },
-              child: Text('Сохранить книгу'),
-            ),
+            if (Auth.hasRole('Admin') || Auth.hasRole('Manager'))
+              ElevatedButton(
+                onPressed: () {
+                  // Логика для сохранения книги
+                  String title = _titleController.text;
+                  String author = _selectedAuthor?.name ?? widget.book?.author ?? "Нет автора";
+                  String genre = _selectedGenre?.name ?? widget.book?.genre ?? "Нет имени";
+                  String year = _yearController.text;
 
-            ElevatedButton(
-              onPressed: () {
-                // Логика для сохранения книги
+                  Book book = Book(
+                    id: widget.book?.id ?? '-1', 
+                    name: title, 
+                    author: author, 
+                    genre: genre, 
+                    year: DateTime.parse(year), 
+                    readers: widget.book?.readers ?? [], 
+                    isTaken: widget.book?.isTaken ?? false,
+                    takingCount: widget.book?.takingCount ?? 0,
+                    dateOfReturning: widget.book?.dateOfReturning);
+                  if (widget.book == null) {
+                    post(book);
+                  } else {
+                    put(book);
+                  }
 
-                if (widget.book == null) {
-                  // post(book);
-                } else {
-                  delete(widget.book!);
-                }
+                  Navigator.pop(context);
+                },
+                child: Text('Сохранить книгу'),
+              ),
 
-                Navigator.pop(context);
-              },
-              child: Text('Удалить книгу'),
-            ),
+            if (Auth.hasRole('Admin') || Auth.hasRole('Manager'))
+              ElevatedButton(
+                onPressed: () {
+                  // Логика для сохранения книги
+
+                  if (widget.book == null) {
+                    // post(book);
+                  } else {
+                    delete(widget.book!);
+                  }
+
+                  Navigator.pop(context);
+                },
+                child: Text('Удалить книгу'),
+              ),
+
+            if (widget.book != null) 
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => TakeBookDialog(book: widget.book!)),
+                  );
+                },
+                child: Text('Взять книгу'),
+              ),
           ],
         ),
       ),
     );
-  }
-  
-  // Метод для загрузки данных
-  Future<List<T>> _loadData<T extends Item>(String uri, T Function(Map<String, dynamic>) fromJson) async {
-  try {
-    var fetchData = FetchData<T>(fromJson);
-    return await fetchData.fetchList(uri); // Возвращаем Future<List<T>>
-    } catch (e) {
-      throw Exception('Ошибка загрузки данных: $e');
-    }
   }
 
   void put(Book book){

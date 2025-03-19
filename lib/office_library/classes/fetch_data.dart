@@ -18,7 +18,6 @@ class FetchData<T extends Item> {
 
     if (response.statusCode == 200) {
       final respStr = response.body.replaceAll("\"[", "[").replaceAll("]\"", "]").replaceAll("\\", "");
-      print('resp = $respStr');
       List<dynamic> jsonResponse = json.decode(respStr);
       return jsonResponse.map((itemJson) => fromJson(itemJson)).toList();
     } 
@@ -43,5 +42,14 @@ class FetchData<T extends Item> {
     else {
       throw Exception('Failed to load items');
       }
+  }
+
+  static Future<List<T>> loadData<T extends Item>(String uri, T Function(Map<String, dynamic>) fromJson) async {
+  try {
+    var fetchData = FetchData<T>(fromJson);
+    return await fetchData.fetchList(uri); // Возвращаем Future<List<T>>
+    } catch (e) {
+      throw Exception('Ошибка загрузки данных: $e');
+    }
   }
 }

@@ -49,7 +49,7 @@ class _CounterState extends State<BookList> {
             child: Text('Загрузить данные'),
           ),
 
-          if (Auth.hasRole('Admin') || Auth.hasRole('Manager')) // Исправлено условие
+          if (Auth.hasRole('Admin') || Auth.hasRole('Manager')) 
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -65,7 +65,16 @@ class _CounterState extends State<BookList> {
               future: _futureBooks,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(), // Индикатор загрузки
+                        SizedBox(height: 16), // Отступ
+                        Text('Загрузка книг...'), // Текст под индикатором
+                      ],
+                    ),
+                  );
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Ошибка: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -93,7 +102,7 @@ class _CounterState extends State<BookList> {
                             putData.putItem(UriStrings.addControllerName(UriStrings.putByIdUri, 'Book'), updatedBookData);
 
                             print('Обновленные данные книги: $updatedBookData');
-                          }
+                            }
                         },
                         child: ListTile(
                           title: Text(books[index].name ?? "Нет названия"),

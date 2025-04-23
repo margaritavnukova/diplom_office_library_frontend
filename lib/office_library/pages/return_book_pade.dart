@@ -1,0 +1,97 @@
+import 'package:flutter/material.dart';
+import '../assets/strings.dart';
+import '../classes/auth.dart';
+import '../classes/book_class.dart';
+import '../classes/fetch_data.dart';
+import '../classes/post_data.dart';
+import '../classes/reader_class.dart';
+import 'item_dropdown.dart';
+
+class ReturnBookDialog extends StatefulWidget {
+  final Book book;
+
+  ReturnBookDialog({
+    required this.book,
+  });
+
+  @override
+  _ReturnBookDialogState createState() => _ReturnBookDialogState();
+}
+
+class _ReturnBookDialogState extends State<ReturnBookDialog> {
+  late Reader? _reader;
+  late DateTime _returnDate;
+  Reader currentUser = Auth.user;
+
+  @override
+  void initState() {
+    super.initState();
+    _returnDate = DateTime.now(); // Дата возврата
+    _reader = currentUser;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Вернуть книгу'),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (!widget.book.isTaken)
+              Column(
+                children: [
+                  Text(
+                    'Книга и так в библиотеке!',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ],
+              )
+            else
+              Column(
+                children: [
+                  Text('Читатель: ${widget.book.currentReader?.name ?? "no name"}'),
+                  SizedBox(height: 20),
+                  SizedBox(height: 10),
+                  Text('Название книги: ${widget.book.name}'),
+                  SizedBox(height: 10),
+                  Text('Дата возврата: ${_returnDate.toLocal()}'),
+                ],
+              ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context); // Закрыть окно
+          },
+          child: Text('Отмена'),
+        ),
+        if (widget.book.isTaken)
+          TextButton(
+            onPressed: () {
+              
+                // логика для сохранения данных
+                Book bookTaken = widget.book.returnBook(_reader!, _returnDate);
+
+                try {
+                  final postData = PostData<Book>();
+                  postData.postItem(UriStrings.returnBookUri, bookTaken);
+
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Книга "${bookTaken.name}" возвращена читателем ${_reader?.name ?? "noname"}')));
+                  print('Дата возврата: $_returnDate');
+
+                  Navigator.pop(context); // Закрыть окно
+                }
+                catch(e) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                }
+              
+            },
+            child: Text('Подтвердить'),
+          ),
+      ],
+    );
+  }
+}

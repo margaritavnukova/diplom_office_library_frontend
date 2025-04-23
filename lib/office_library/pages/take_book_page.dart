@@ -58,17 +58,17 @@ class _TakeBookDialogState extends State<TakeBookDialog> {
                   if (currentUser.role == 'User')
                     Text('Читатель: ${currentUser.name}')
                   else
-                   GenericDropdown<Reader>(
-              futureItems: FetchData.loadData<Reader>(
-                UriStrings.addControllerName(UriStrings.getUri, 'Reader'),
-                Reader.fromJson, 
-              ),
-              onItemSelected: (Reader? reader) {
-                  _reader = reader;
-              },
-              label: widget.book.genre,
-            ),
-            SizedBox(height: 20),
+                    GenericDropdown<Reader>(
+                      futureItems: FetchData.loadData<Reader>(
+                        UriStrings.addControllerName(UriStrings.getUri, 'User'),
+                        Reader.fromJson, 
+                      ),
+                      onItemSelected: (Reader? reader) {
+                        _reader = reader;
+                      },
+                      label: "Читатель",
+                    ),
+                  SizedBox(height: 20),
                   SizedBox(height: 10),
                   Text('Название книги: ${widget.book.name}'),
                   SizedBox(height: 10),
@@ -95,14 +95,15 @@ class _TakeBookDialogState extends State<TakeBookDialog> {
                 );
               } else {
                 // логика для сохранения данных
-                Book bookTaken = widget.book.takeBook(_reader!, _returnDate);
+                Book bookTaken = widget.book.takeBook(_reader!);
 
                 try {
                   final postData = PostData<Book>();
                   postData.postItem(UriStrings.takeBookUri, bookTaken);
 
-                  print('Книга "${bookTaken.name}" взята читателем $_reader.name');
-                  print('Дата возврата: $_returnDate');
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Книга "${bookTaken.name}" взята читателем ${_reader?.name ?? "noname"}')));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Дата возврата: $_returnDate')));
+
                   Navigator.pop(context); // Закрыть окно
                 }
                 catch(e) {

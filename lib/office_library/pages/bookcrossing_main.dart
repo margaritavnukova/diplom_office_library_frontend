@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'user_profile_page.dart';
 import '../assets/strings.dart';
 import 'book_list_page_base.dart';
-import 'qrcode_page.dart';
 import 'authorization_page.dart';
 import '../classes/reader_class.dart';
 import '../classes/auth.dart';
@@ -57,7 +56,7 @@ class MyMainPageState extends State<MyMainPage> {
           UserProfilePage(reader: widget.reader),
           // single user books
           BookList(uri: UriStrings.getBooksByReaderUri + Auth.user.email.replaceAll('.', '-')),
-          MyQrCodePage(),
+          // MyQrCodePage(),
           // all book in lib
           BookList(uri: UriStrings.addControllerName(UriStrings.getUri, 'Book'))
         ],
@@ -75,13 +74,13 @@ class MyMainPageState extends State<MyMainPage> {
             icon: Icon(Icons.book),
             label: "Ваши книги",
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.qr_code),
-            label: "Добавить книгу через QR-код",
-          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.qr_code),
+          //   label: "Добавить книгу через QR-код",
+          //   ),
           BottomNavigationBarItem(
             icon: Icon(Icons.queue),
-            label: "Очередь на книги",
+            label: "Книги библиотеки",
           ),
         ],
         currentIndex: _selectedIndex,

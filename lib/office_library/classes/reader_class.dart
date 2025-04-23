@@ -12,8 +12,8 @@ class Reader implements Item {
   String? name;
   final String? role;
   final List<Book>? books;
-  final String? photo;
   final DateTime? registrationDate;
+  final String? photoBase64;
 
   Reader({
     this.id,
@@ -22,8 +22,8 @@ class Reader implements Item {
     this.name,
     this.role,
     this.books,
-    this.photo,
-    this.registrationDate
+    this.registrationDate,
+    this.photoBase64
   });
   
   @override
@@ -34,10 +34,10 @@ class Reader implements Item {
       phoneNumber: json[UserJsonKeys.phoneNumber],
       name: json[UserJsonKeys.userName],
       role: json[UserJsonKeys.role],
-      photo: json[UserJsonKeys.photo],
       registrationDate: json[UserJsonKeys.registrationDate] != null 
         ? DateTime.parse(json[UserJsonKeys.registrationDate])
-        : DateTime.now()
+        : DateTime.now(),
+      photoBase64: json[UserJsonKeys.photoBase64],
     );
   }
 
@@ -48,8 +48,8 @@ class Reader implements Item {
     UserJsonKeys.phoneNumber: phoneNumber, 
     UserJsonKeys.userName: name, 
     UserJsonKeys.role: role,
-    UserJsonKeys.photo: photo.toString(),
-    UserJsonKeys.registrationDate: registrationDate.toString()
+    UserJsonKeys.registrationDate: registrationDate.toString(),
+    UserJsonKeys.photoBase64: photoBase64,
     };
 
   String toJsonStr() => toJson.toString();

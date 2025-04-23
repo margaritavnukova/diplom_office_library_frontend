@@ -4,6 +4,7 @@ class UriStrings {
   static const getBooksByReaderUri = '$address/api/Book/GetByReader/';
   static const getOneUserByEmailUri = '$address/api/User/GetByEmail/';
   static const takeBookUri = '$address/api/UserBookHistory/RegisterBookTaking';
+  static const returnBookUri = '$address/api/UserBookHistory/RegisterBookReturning';
 
   static const getUri = '$address/api/[controllerName]/GetAll';
   static const getOneByIdUri = '$address/api/[controllerName]/GetOne/';
@@ -40,8 +41,8 @@ class UserJsonKeys {
   static const userName = 'UserName';
   static const role = 'Role';
   static const registrationDate = 'RegistrationDate';
-  static const photo = 'PhotoBase64';
   static const books = 'Books';
+  static const photoBase64 = 'PhotoBase64';
 }
 
 class BookJsonKeys {
@@ -55,6 +56,7 @@ class BookJsonKeys {
   static const dateOfReturning = 'DateOfReturning';
   static const takingCount = 'TakingCount';
   static const currentReader = 'CurrentReader';
+  static const photoBase64 = 'PhotoBase64';
 }
 
 class GenreJsonKeys {

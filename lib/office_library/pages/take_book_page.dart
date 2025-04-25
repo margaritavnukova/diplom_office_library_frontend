@@ -81,7 +81,7 @@ class _TakeBookDialogState extends State<TakeBookDialog> {
       actions: [
         TextButton(
           onPressed: () {
-            Navigator.pop(context); // Закрыть окно
+            if (mounted && !Navigator.of(context).userGestureInProgress) Navigator.pop(context); // Закрыть окно
           },
           child: Text('Отмена'),
         ),
@@ -104,7 +104,7 @@ class _TakeBookDialogState extends State<TakeBookDialog> {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Книга "${bookTaken.name}" взята читателем ${_reader?.name ?? "noname"}')));
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Дата возврата: $_returnDate')));
 
-                  Navigator.pop(context); // Закрыть окно
+                  if (mounted && !Navigator.of(context).userGestureInProgress) Navigator.pop(context); // Закрыть окно
                 }
                 catch(e) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));

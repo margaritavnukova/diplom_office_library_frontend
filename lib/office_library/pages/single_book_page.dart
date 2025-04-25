@@ -50,6 +50,7 @@ class _AddBookPageState extends State<AddBookPage> {
     }
   }
 
+  @override
   Widget build(BuildContext context) {
   final isAdmin = Auth.hasRole('Admin') || Auth.hasRole('Manager');
   
@@ -118,22 +119,28 @@ Widget _buildAdminView() {
 
       if (widget.book != null && !widget.book!.isTaken) 
       ElevatedButton(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+         final result = await Navigator.push<bool> (
             context,
             MaterialPageRoute(builder: (context) => TakeBookDialog(book: widget.book!)),
           );
+          if (result == true){
+            setState(() {});
+          }
         },
         child: Text('Взять книгу'),
       ),
 
       if (widget.book != null && widget.book!.isTaken) 
       ElevatedButton(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          final result = await Navigator.push<bool>(
             context,
             MaterialPageRoute(builder: (context) => ReturnBookDialog(book: widget.book!)),
           );
+          if (result == true){
+            setState(() {});
+          }
         },
         child: Text('Вернуть книгу'),
       ),
@@ -152,11 +159,14 @@ Widget _buildUserView() {
 
       if (widget.book != null && !widget.book!.isTaken) 
       ElevatedButton(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          final result = await Navigator.push<bool>(
             context,
             MaterialPageRoute(builder: (context) => TakeBookDialog(book: widget.book!)),
           );
+          if (result == true) {
+            setState(() {});
+          }
         },
         child: Text(
           'Взять книгу',
@@ -172,10 +182,12 @@ Widget _buildUserView() {
           widget.book!.currentReader!.email == Auth.user.email) 
       ElevatedButton(
         onPressed: () {
-          Navigator.push(
+          if (mounted && !Navigator.of(context).userGestureInProgress) {
+            Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => ReturnBookDialog(book: widget.book!)),
           );
+          }
         },
         child: 
         Text('Вернуть книгу',
@@ -247,8 +259,9 @@ try {
       put(book);
     }
 
-    Navigator.pop(context, true); // Возвращаем true как флаг успешного обновления
-    } catch (e) {
+    if (mounted && !Navigator.of(context).userGestureInProgress) Navigator.pop(context/* , true */); // Возвращаем true как флаг успешного обновления
+    } 
+    catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Ошибка при сохранении: $e')),
       );

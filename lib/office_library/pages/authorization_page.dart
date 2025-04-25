@@ -38,10 +38,12 @@ class _MyAuthorization extends State<MyAuthorization>{
 
                   var readerReturned = Auth.user;
 
-                  Navigator.pushReplacement(
+                  if (mounted && !Navigator.of(context).userGestureInProgress) {
+                    Navigator.pushReplacement(
                     context, 
                     MaterialPageRoute(builder: (context) => MyMainPage(reader: readerReturned)),
                     );
+                  }
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
                 }

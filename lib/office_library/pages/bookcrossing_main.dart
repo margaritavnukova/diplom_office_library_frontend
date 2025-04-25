@@ -37,13 +37,17 @@ class MyMainPageState extends State<MyMainPage> {
         actions: [
           IconButton(
             icon: Icon(Icons.logout),
-            onPressed: () {
+            onPressed: () async {
               apiService.logout();
-              Navigator.pushAndRemoveUntil(
-                context, 
-                MaterialPageRoute(builder: (context) => MyAuthorization()),
-                (Route<dynamic> route) => false,
-              );
+              final result = await Navigator.pushAndRemoveUntil<bool>(
+                  context,
+                  MaterialPageRoute(builder: (context) => MyAuthorization()),
+                  (Route<dynamic> route) => false,
+                );
+                if (result == true) {
+                  // Обновляем данные, если редактирование успешно
+                  setState(() {});
+                }
             }
           )
         ]
@@ -53,7 +57,7 @@ class MyMainPageState extends State<MyMainPage> {
       child: IndexedStack(
         index: _selectedIndex,
         children: [
-          UserProfilePage(reader: widget.reader),
+          UserProfilePage(initialReader: widget.reader),
           // single user books
           BookList(uri: UriStrings.getBooksByReaderUri + Auth.user.email.replaceAll('.', '-')),
           // MyQrCodePage(),

@@ -7,7 +7,7 @@ class PutData<T extends Item> {
   PutData(this.fromJson);
 
   // Функция для добавления нового элемента 
-  Future<void> putItem(String uri, T item) async {
+  Future<T> putItem(String uri, T item) async {
     final response = await http.put(
       Uri.parse(uri),
       headers: <String, String>{
@@ -18,8 +18,9 @@ class PutData<T extends Item> {
 
     print('response: ${response.statusCode}');
 
-    if (response.statusCode == 201 || response.statusCode == 200) {
+    if (response.statusCode / 100 < 3) {
       print('Item edited successfully');
+      return jsonDecode(response.body);
     } else {
       throw Exception('Failed to add item: ${response.body}');
     }

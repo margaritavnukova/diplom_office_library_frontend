@@ -9,12 +9,25 @@ import '../classes/reader_class.dart';
 import 'edit_profile_page.dart';
 import 'item_dropdown.dart';
 
-class UserProfilePage extends StatelessWidget {
-  final Reader reader;
-  late Reader? otherReader;
+class UserProfilePage extends StatefulWidget {
+  final Reader initialReader;
+
+  const UserProfilePage({required this.initialReader, Key? key}) : super(key: key);
+
+  @override
+  _UserProfilePageState createState() => _UserProfilePageState();
+}
+
+class _UserProfilePageState extends State<UserProfilePage> {
+  late Reader reader;
+  Reader? otherReader;
   static const double paddingMeasure = 10;
 
-  UserProfilePage({required this.reader});
+  @override
+  void initState() {
+    super.initState();
+    reader = widget.initialReader;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +36,7 @@ class UserProfilePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Профиль пользователя'),
+        title: const Text('Профиль пользователя'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(paddingMeasure * 4),
@@ -40,13 +53,13 @@ class UserProfilePage extends StatelessWidget {
                     children: [
                       Text(
                         'Имя: ${reader.name ?? "Нет данных об имени"}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.deepPurple,
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
                         'Почта: ${reader.email}',
                         style: TextStyle(
@@ -54,7 +67,7 @@ class UserProfilePage extends StatelessWidget {
                           color: Colors.deepPurple[700],
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
                         'Телефон: ${reader.phoneNumber}',
                         style: TextStyle(
@@ -62,27 +75,27 @@ class UserProfilePage extends StatelessWidget {
                           color: Colors.deepPurple[700],
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
                         'Количество книг: ',
                         style: TextStyle(
                           fontSize: 16,
-                          color: Colors.deepPurple[700],
+                          color: Colors.deepPurple[700]
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       FutureBuilder<List<Book>>(
                         future: fetchBooks(reader.email),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
-                            return CircularProgressIndicator();
+                            return const CircularProgressIndicator();
                           } else if (snapshot.hasError) {
                             return Text(
                               'Ошибка: ${snapshot.error}',
-                              style: TextStyle(color: Colors.red),
+                              style: const TextStyle(color: Colors.red),
                             );
                           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                            return Text('Книг нет');
+                            return const Text('Книг нет');
                           } else {
                             return Text(
                               '${snapshot.data!.length}',
@@ -94,14 +107,15 @@ class UserProfilePage extends StatelessWidget {
                           }
                         },
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
                         'Дата регистрации: ${reader.registrationDate?.toLocal() ?? "Нет данных"}',
-                        style: TextStyle(fontSize: 16,
+                        style: TextStyle(
+                          fontSize: 16,
                           color: Colors.deepPurple[700],
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
                         'Роль: ${reader.role ?? "Нет данных"}',
                         style: TextStyle(
@@ -120,55 +134,49 @@ class UserProfilePage extends StatelessWidget {
                       radius: MediaQuery.sizeOf(context).width / paddingMeasure,
                       backgroundColor: Colors.purpleAccent,
                       backgroundImage: (reader.photoBase64 != null)
-                          ? MemoryImage(base64Decode(reader.photoBase64!)) as ImageProvider<Object>?
+                          ? MemoryImage(base64Decode(reader.photoBase64!)) as ImageProvider?
                           : null,
                     ),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             // Кнопки редактирования
             if (isCurrentUser || isAdmin)
               ElevatedButton(
-                onPressed: () {
-                  // Логика редактирования профиля
-                  _editProfile(context);
-                },
+                onPressed: () => _editProfile(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.deepPurple,
-                  minimumSize: Size(double.infinity, 50),
+                  minimumSize: const Size(double.infinity, 50),
                 ),
-                child: Text(
+                child: const Text(
                   'Редактировать профиль',
                   style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
               ),
-            if (isAdmin)
-              SizedBox(height: 10),
+            if (isAdmin) const SizedBox(height: 10),
             if (isAdmin)
               GenericDropdown<Reader>(
-                      futureItems: FetchData.loadData<Reader>(
-                        UriStrings.addControllerName(UriStrings.getUri, 'User'),
-                        Reader.fromJson, 
-                      ),
-                      onItemSelected: (Reader? reader) {
-                        otherReader = reader!;
-                      },
-                      label: "Читатель",
-                    ),
-
-              if (isAdmin)
-              ElevatedButton(
-                onPressed: () {
-                  // Логика редактирования пользователей для админа
-                  _editUserPermissions(context);
+                futureItems: FetchData.loadData<Reader>(
+                  UriStrings.addControllerName(UriStrings.getUri, 'User'),
+                  Reader.fromJson,
+                ),
+                onItemSelected: (Reader? reader) {
+                  setState(() {
+                    otherReader = reader;
+                  });
                 },
+                label: "Читатель",
+              ),
+            if (isAdmin)
+              ElevatedButton(
+                onPressed: () => _editUserPermissions(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.purple,
-                  minimumSize: Size(double.infinity, 50),
+                  minimumSize: const Size(double.infinity, 50),
                 ),
-                child: Text(
+                child: const Text(
                   'Редактировать пользователя',
                   style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
@@ -179,29 +187,46 @@ class UserProfilePage extends StatelessWidget {
     );
   }
 
-  void _editProfile(BuildContext context) {
-    // Навигация на страницу редактирования профиля
-    Navigator.push(
+  Future<void> _editProfile(BuildContext context) async {
+    final updatedReader = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => EditProfilePage(reader: reader),
       ),
     );
+
+    if (updatedReader != null) {
+      setState(() {
+        reader = updatedReader;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Профиль успешно обновлен')),
+      );
+    }
   }
 
-  void _editUserPermissions(BuildContext context) {
-    // Навигация на страницу редактирования прав пользователя
-    Navigator.push(
+  Future<void> _editUserPermissions(BuildContext context) async {
+    if (otherReader == null) return;
+    
+    final updatedReader = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => EditProfilePage(reader: otherReader!),
-      )
+      ),
     );
+
+    if (updatedReader != null) {
+      setState(() {
+        otherReader = updatedReader;
+      });
+    }
   }
 }
 
 Future<List<Book>> fetchBooks(String email) async {
   var fetchData = FetchData<Book>(Book.fromJson);
-  var books = fetchData.fetchList(UriStrings.addControllerName(UriStrings.getBooksByReaderUri + email, 'Book'));
+  var books = fetchData.fetchList(
+    UriStrings.addControllerName(UriStrings.getBooksByReaderUri + email, 'Book')
+  );
   return books;
 }

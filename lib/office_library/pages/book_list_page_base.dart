@@ -51,11 +51,15 @@ class _CounterState extends State<BookList> {
 
           if (Auth.hasRole('Admin') || Auth.hasRole('Manager')) 
             ElevatedButton(
-              onPressed: () {
-                Navigator.push(
+              onPressed: () async {
+             final result = await Navigator.push<bool>(
                   context,
                   MaterialPageRoute(builder: (context) => AddBookPage()),
                 );
+                if (result == true) {
+                  // Обновляем данные, если редактирование успешно
+                  setState(() {});
+                }
               },
               child: Text('Добавить новую книгу'),
             ),

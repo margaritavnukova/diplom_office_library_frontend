@@ -10,7 +10,7 @@ import '../classes/reader_class.dart';
 class EditProfilePage extends StatefulWidget {
   final Reader reader;
 
-  const EditProfilePage({Key? key, required this.reader}) : super(key: key);
+  const EditProfilePage({super.key, required this.reader});
 
   @override
   _EditProfilePageState createState() => _EditProfilePageState();
@@ -55,42 +55,46 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future<void> _saveChanges() async {
-    if (_nameController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Введите имя')),
-      );
-      return;
-    }
-
+    if (_isLoading) return;
+    
     setState(() => _isLoading = true);
 
     try {
-      // Подготовка данных для отправки
       String? imageBase64;
       if (_newImageFile != null) {
         final bytes = await _newImageFile!.readAsBytes();
         imageBase64 = base64Encode(bytes);
       }
 
-      // API вызов для сохранения изменений
-      Reader readerEdited = Reader(
+      final readerEdited = Reader(
         id: widget.reader.id, 
         email: _emailController.text,
         name: _nameController.text,
         phoneNumber: _phoneController.text,
         role: widget.reader.role,
         registrationDate: widget.reader.registrationDate,
-        photoBase64: imageBase64,
+        photoBase64: imageBase64 ?? widget.reader.photoBase64,
       );
       
-      put(readerEdited);
-
-      // После успешного сохранения
-      Navigator.pop(context, true); // Возвращаем true как флаг успешного обновления
+      final updatedReader = await put(readerEdited);
+      
+      if (!mounted) return;
+      
+      Navigator.pop(context, updatedReader);
+      
     } catch (e) {
+      if (!mounted) return;
+      
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Ошибка при сохранении: $e')),
+        SnackBar(
+          content: Text('Ошибка при сохранении: ${e.toString()}'),
+          duration: const Duration(seconds: 3),
+        ),
       );
+      
+      // Возвращаем null в случае ошибки
+      Navigator.pop(context, null);
+      
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -207,7 +211,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 }
 
- void put(Reader reader){
-    final putData = PutData<Reader>(Reader.fromJson);
-    putData.putItem(UriStrings.addControllerName(UriStrings.putByIdUri, 'User'), reader);
-  }
+Future<Reader> put(Reader reader) async {
+  final putData = PutData<Reader>(Reader.fromJson);
+  return await putData.putItem(UriStrings.addControllerName(UriStrings.putByIdUri, 'User'), reader);
+}

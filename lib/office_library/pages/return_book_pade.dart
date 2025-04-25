@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import '../assets/strings.dart';
 import '../classes/auth.dart';
 import '../classes/book_class.dart';
-import '../classes/fetch_data.dart';
 import '../classes/post_data.dart';
 import '../classes/reader_class.dart';
-import 'item_dropdown.dart';
 
 class ReturnBookDialog extends StatefulWidget {
   final Book book;
@@ -64,7 +62,7 @@ class _ReturnBookDialogState extends State<ReturnBookDialog> {
       actions: [
         TextButton(
           onPressed: () {
-            Navigator.pop(context); // Закрыть окно
+            if (mounted && !Navigator.of(context).userGestureInProgress) Navigator.pop(context); // Закрыть окно
           },
           child: Text('Отмена'),
         ),
@@ -82,7 +80,7 @@ class _ReturnBookDialogState extends State<ReturnBookDialog> {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Книга "${bookTaken.name}" возвращена читателем ${_reader?.name ?? "noname"}')));
                   print('Дата возврата: $_returnDate');
 
-                  Navigator.pop(context); // Закрыть окно
+                  if (mounted && !Navigator.of(context).userGestureInProgress) Navigator.pop(context); // Закрыть окно
                 }
                 catch(e) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));

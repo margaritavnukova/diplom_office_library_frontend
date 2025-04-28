@@ -12,9 +12,9 @@ class UriStrings {
   static const putByIdUri = '$address/api/[controllerName]/Put';
   static const deleteByIdUri = '$address/api/[controllerName]/Delete';
 
-  static const registerUri = '$address/Account/Register';
-  static const loginUri = '$address/Account/Login';
-  static const logoutUri = '$address/Account/LogOff';
+  static const registerUri = '$address/AccountApi/Register';
+  static const loginUri = '$address/AccountApi/Login';
+  static const logoutUri = '$address/AccountApi/LogOff';
 
   static addControllerName(String uri, String controllerName) { return uri.replaceAll('[controllerName]', controllerName); }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../assets/strings.dart';
+import '../classes/fetch_data.dart';
 import '../classes/put_data.dart';
 import '../classes/reader_class.dart';
 
@@ -24,11 +25,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
   bool _isLoading = false;
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
-    _nameController = TextEditingController(text: widget.reader.name);
-    _emailController = TextEditingController(text: widget.reader.email);
-    _phoneController = TextEditingController(text: widget.reader.phoneNumber);
+
+    var fetchData = FetchData<Reader>(Reader.fromJson);
+    var userToEdit = await fetchData.fetchOne(UriStrings.getOneUserByEmailUri + widget.reader.email);
+
+    _nameController = TextEditingController(text: userToEdit.name);
+    _emailController = TextEditingController(text: userToEdit.email);
+    _phoneController = TextEditingController(text: userToEdit.phoneNumber);
   }
 
   @override

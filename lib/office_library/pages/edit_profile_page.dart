@@ -23,17 +23,30 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController _phoneController;
   File? _newImageFile;
   bool _isLoading = false;
+  late Future<Reader> _userFuture;
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
+    _userFuture = fetch();
+    _initializeControllers();
+  }
 
+  Future<void> _initializeControllers() async {
+    final userToEdit = await _userFuture;
+    setState(() {
+      _nameController = TextEditingController(text: userToEdit.name);
+      _emailController = TextEditingController(text: userToEdit.email);
+      _phoneController = TextEditingController(text: userToEdit.phoneNumber);
+    });
+  }
+
+  Future<Reader> fetch() async {
     var fetchData = FetchData<Reader>(Reader.fromJson);
-    var userToEdit = await fetchData.fetchOne(UriStrings.getOneUserByEmailUri + widget.reader.email);
-
-    _nameController = TextEditingController(text: userToEdit.name);
-    _emailController = TextEditingController(text: userToEdit.email);
-    _phoneController = TextEditingController(text: userToEdit.phoneNumber);
+    var editedEmail = widget.reader.email.replaceAll('.', '-');
+    return await fetchData.fetchOne(
+      UriStrings.getOneUserByEmailUri + editedEmail
+    );
   }
 
   @override

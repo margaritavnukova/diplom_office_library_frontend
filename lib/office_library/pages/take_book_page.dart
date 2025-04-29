@@ -49,7 +49,7 @@ class _TakeBookDialogState extends State<TakeBookDialog> {
                   ),
                   SizedBox(height: 10),
                   Text('Читатель: ${widget.book.currentReader?.name}'),
-                  Text('Дата возврата: ${widget.book.dateOfReturning}'),
+                  Text('Дата возврата: ${widget.book.plannedReturnDate}'),
                 ],
               )
             else
@@ -85,35 +85,55 @@ class _TakeBookDialogState extends State<TakeBookDialog> {
           },
           child: Text('Отмена'),
         ),
-        if (!widget.book.isTaken)
+        // Логика взятия книги
+        if (!(widget.book?.isTaken ?? true))
           TextButton(
-            onPressed: () {
-              // Логика для взятия книги
+            onPressed: () async {
               if (_reader == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Выберите читателя')),
+                _showErrorSnackBar('Выберите читателя');
+                return;
+              }
+
+              try {
+                final bookTaken = widget.book!.takeBook(_reader!);
+                
+                final postData = PostData<Book>();
+                await postData.postItem(UriStrings.takeBookUri, bookTaken);
+
+                _showSuccessSnackBar(
+                  'Книга "${bookTaken.name}" взята читателем ${_reader?.name ?? "noname"}'
                 );
-              } else {
-                // логика для сохранения данных
-                Book bookTaken = widget.book.takeBook(_reader!);
-
-                try {
-                  final postData = PostData<Book>();
-                  postData.postItem(UriStrings.takeBookUri, bookTaken);
-
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Книга "${bookTaken.name}" взята читателем ${_reader?.name ?? "noname"}')));
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Дата возврата: $_returnDate')));
-
-                  if (mounted && !Navigator.of(context).userGestureInProgress) Navigator.pop(context); // Закрыть окно
-                }
-                catch(e) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
-                }
+                _showSuccessSnackBar(
+                  'Дата возврата: ${bookTaken.plannedReturnDate?.toString() ?? "не определена"}'
+                );
+                
+                await _closeDialog();
+              } catch (e) {
+                _showErrorSnackBar(e);
               }
             },
             child: Text('Подтвердить'),
           ),
       ],
     );
+  }
+void _showSuccessSnackBar(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  void _showErrorSnackBar(dynamic error) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(error.toString())),
+    );
+  }
+
+  Future<void> _closeDialog() async {
+    if (mounted && !Navigator.of(context).userGestureInProgress) {
+      Navigator.pop(context);
+    }
   }
 }

@@ -53,7 +53,7 @@ class _RegisterPageState extends State<RegisterPage> {
       print(response.body);
       print(response.statusCode);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         // Регистрация успешна
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Регистрация прошла успешно!')),

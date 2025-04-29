@@ -14,7 +14,9 @@ class Book implements Item {
   final DateTime year;
   final List<dynamic> readers;
   final bool isTaken;
-  final DateTime? dateOfReturning;
+  final DateTime? dateTaken;
+  final DateTime? plannedReturnDate; // Добавлено
+  final DateTime? actualReturnDate;   // Изменено с dateOfReturning
   final int? takingCount;
   final Reader? currentReader;
   final String? photoBase64;
@@ -27,7 +29,9 @@ class Book implements Item {
     required this.year,
     required this.readers,
     required this.isTaken,
-    this.dateOfReturning,
+    this.dateTaken,
+    this.plannedReturnDate, // Добавлено
+    this.actualReturnDate,   // Изменено
     this.takingCount,
     this.currentReader,
     this.photoBase64
@@ -43,8 +47,14 @@ class Book implements Item {
       year: DateTime.parse(json[BookJsonKeys.year]),
       readers: json[BookJsonKeys.readers],
       isTaken: json[BookJsonKeys.isTaken],
-      dateOfReturning: json[BookJsonKeys.dateOfReturning] != null
-          ? DateTime.parse(json[BookJsonKeys.dateOfReturning])
+      dateTaken: json[BookJsonKeys.dateTaken] != null
+          ? DateTime.parse(json[BookJsonKeys.dateTaken])
+          : null,
+      plannedReturnDate: json[BookJsonKeys.plannedReturnDate] != null // Добавлено
+          ? DateTime.parse(json[BookJsonKeys.plannedReturnDate])
+          : null,
+      actualReturnDate: json[BookJsonKeys.actualReturnDate] != null // Изменено
+          ? DateTime.parse(json[BookJsonKeys.actualReturnDate])
           : null,
       takingCount: json[BookJsonKeys.takingCount],
       currentReader: json[BookJsonKeys.currentReader] != null
@@ -64,52 +74,56 @@ class Book implements Item {
       BookJsonKeys.year: year.toIso8601String(),
       BookJsonKeys.readers: readers,
       BookJsonKeys.isTaken: isTaken,
-      BookJsonKeys.dateOfReturning: dateOfReturning?.toIso8601String(),
+      BookJsonKeys.dateTaken: dateTaken?.toIso8601String(),
+      BookJsonKeys.plannedReturnDate: plannedReturnDate?.toIso8601String(), // Добавлено
+      BookJsonKeys.actualReturnDate: actualReturnDate?.toIso8601String(), // Изменено
       BookJsonKeys.takingCount: takingCount,
-      BookJsonKeys.currentReader: currentReader,
+      BookJsonKeys.currentReader: currentReader?.toJson(),
       BookJsonKeys.photoBase64: photoBase64,
     };
   }
 
-  String toJsonStr() => toJson().toString();
-
   Book takeBook(Reader reader) {
+    final now = DateTime.now();
     readers.add(reader);
 
-    Book book = Book(
+    return Book(
       id: id,
       author: author,
       name: name,
       genre: genre,
       year: year,
       readers: readers,
-      isTaken: isTaken,
-      dateOfReturning: null,
-      takingCount: takingCount ?? 1,
+      isTaken: true, // Установлено в true
+      dateTaken: now,
+      plannedReturnDate: now.add(Duration(days: 30)), // Рассчитано
+      actualReturnDate: null, // Пока книга не возвращена
+      takingCount: (takingCount ?? 0) + 1, // Увеличено
       currentReader: reader,
       photoBase64: photoBase64
     );
-
-    return book;
   }
 
   Book returnBook(Reader reader, DateTime returnDate) {
-    Book book = Book(
+    return Book(
       id: id,
       author: author,
       name: name,
       genre: genre,
       year: year,
       readers: readers,
-      isTaken: isTaken,
-      dateOfReturning: returnDate,
-      takingCount: takingCount ?? 1,
-      currentReader: reader,
+      isTaken: false, // Установлено в false
+      dateTaken: dateTaken,
+      plannedReturnDate: plannedReturnDate,
+      actualReturnDate: DateTime.now(), // Установлена текущая дата
+      takingCount: takingCount,
+      currentReader: null, // Обнулен
       photoBase64: photoBase64
     );
-
-    return book;
   }
+
+  // Остальные методы без изменений
+  String toJsonStr() => toJson().toString();
 
   ImageProvider? get coverImage {
     if (photoBase64 == null) {

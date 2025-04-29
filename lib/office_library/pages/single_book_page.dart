@@ -156,48 +156,50 @@ Widget _buildUserView() {
       _buildInfoCard('Жанр', widget.book?.genre),
       _buildInfoCard('Автор', widget.book?.author),
       _buildInfoCard('Год издания', widget.book?.year.toString()),
+      _buildInfoCard('Дата возврата', widget.book?.plannedReturnDate.toString() ?? "Нет"),
 
+      // Кнопка "Взять книгу"
       if (widget.book != null && !widget.book!.isTaken) 
-      ElevatedButton(
-        onPressed: () async {
-          final result = await Navigator.push<bool>(
-            context,
-            MaterialPageRoute(builder: (context) => TakeBookDialog(book: widget.book!)),
-          );
-          if (result == true) {
-            setState(() {});
-          }
-        },
-        child: Text(
-          'Взять книгу',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.grey[600],
+        ElevatedButton(
+          onPressed: () async {
+            final result = await Navigator.push<bool>(
+              context,
+              MaterialPageRoute(builder: (context) => TakeBookDialog(book: widget.book!)),
+            );
+            if (result == true && mounted) {
+              setState(() {});
+            }
+          },
+          child: Text(
+            'Взять книгу',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[600],
+            ),
           ),
         ),
-      ),
 
+      // Кнопка "Вернуть книгу"
       if (widget.book != null && widget.book!.isTaken && 
-          widget.book!.currentReader!.email == Auth.user.email) 
-      ElevatedButton(
-        onPressed: () {
-          if (mounted && !Navigator.of(context).userGestureInProgress) {
-            Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ReturnBookDialog(book: widget.book!)),
-          );
-          }
-        },
-        child: 
-        Text('Вернуть книгу',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.grey[600],
+          widget.book!.currentReader?.email == Auth.user?.email) 
+        ElevatedButton(
+          onPressed: () async {
+            if (!mounted) return;
+            await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ReturnBookDialog(book: widget.book!)),
+            );
+          },
+          child: Text(
+            'Вернуть книгу',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[600],
+            ),
           ),
         ),
-      ),
     ]
   );
 }
@@ -250,7 +252,7 @@ try {
       readers: widget.book?.readers ?? [], 
       isTaken: widget.book?.isTaken ?? false,
       takingCount: widget.book?.takingCount ?? 0,
-      dateOfReturning: widget.book?.dateOfReturning,
+      plannedReturnDate: widget.book?.plannedReturnDate,
       photoBase64: imageBase64,
     );
     if (widget.book == null) {

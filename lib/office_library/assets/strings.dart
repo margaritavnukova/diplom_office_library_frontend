@@ -12,9 +12,9 @@ class UriStrings {
   static const putByIdUri = '$address/api/[controllerName]/Put';
   static const deleteByIdUri = '$address/api/[controllerName]/Delete';
 
-  static const registerUri = '$address/AccountApi/Register';
-  static const loginUri = '$address/AccountApi/Login';
-  static const logoutUri = '$address/AccountApi/LogOff';
+  static const registerUri = '$address/api/Account/Register';
+  static const loginUri = '$address/Account/Login';
+  static const logoutUri = '$address/Account/LogOff';
 
   static addControllerName(String uri, String controllerName) { return uri.replaceAll('[controllerName]', controllerName); }
 }
@@ -53,7 +53,9 @@ class BookJsonKeys {
   static const year = 'Year';
   static const readers = 'Readers';
   static const isTaken = 'IsTaken';
-  static const dateOfReturning = 'DateOfReturning';
+  static const dateTaken = 'DateTaken';
+  static const plannedReturnDate = 'PlannedReturnDate';
+  static const actualReturnDate = 'ActualReturnDate';
   static const takingCount = 'TakingCount';
   static const currentReader = 'CurrentReader';
   static const photoBase64 = 'PhotoBase64';

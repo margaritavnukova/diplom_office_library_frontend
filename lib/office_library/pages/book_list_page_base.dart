@@ -172,9 +172,9 @@ class _CounterState extends State<BookList> {
                             : Colors.red,
                         ),
                       ),
-                    if (book.isTaken && book.dateOfReturning != null)
+                    if (book.isTaken && book.plannedReturnDate != null)
                       Text(
-                        'Вернуть до: ${(book.dateOfReturning!)}',
+                        'Вернуть до: ${(book.plannedReturnDate!)}',
                         style: TextStyle(fontSize: 12),
                       ),
                   ],

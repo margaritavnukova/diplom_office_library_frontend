@@ -66,30 +66,49 @@ class _ReturnBookDialogState extends State<ReturnBookDialog> {
           },
           child: Text('Отмена'),
         ),
-        if (widget.book.isTaken)
-          TextButton(
-            onPressed: () {
+        // Логика возврата книги
+      if (widget.book?.isTaken ?? false)
+        TextButton(
+          onPressed: () async {
+            try {
+              final bookReturned = widget.book!.returnBook(_reader!, DateTime.now());
               
-                // логика для сохранения данных
-                Book bookTaken = widget.book.returnBook(_reader!, _returnDate);
+              final postData = PostData<Book>();
+              await postData.postItem(UriStrings.returnBookUri, bookReturned);
 
-                try {
-                  final postData = PostData<Book>();
-                  postData.postItem(UriStrings.returnBookUri, bookTaken);
-
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Книга "${bookTaken.name}" возвращена читателем ${_reader?.name ?? "noname"}')));
-                  print('Дата возврата: $_returnDate');
-
-                  if (mounted && !Navigator.of(context).userGestureInProgress) Navigator.pop(context); // Закрыть окно
-                }
-                catch(e) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
-                }
+              _showSuccessSnackBar(
+                'Книга "${bookReturned.name}" возвращена читателем ${_reader?.name ?? "noname"}'
+              );
               
-            },
-            child: Text('Подтвердить'),
-          ),
+              await _closeDialog();
+            } catch (e) {
+              _showErrorSnackBar(e);
+            }
+          },
+          child: Text('Подтвердить'),
+        ),
       ],
     );
   }
+
+  void _showSuccessSnackBar(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  void _showErrorSnackBar(dynamic error) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(error.toString())),
+    );
+  }
+
+  Future<void> _closeDialog() async {
+    if (mounted && !Navigator.of(context).userGestureInProgress) {
+      Navigator.pop(context);
+    }
+  }
 }
+

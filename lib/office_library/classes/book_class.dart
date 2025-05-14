@@ -96,7 +96,7 @@ class Book implements Item {
       readers: readers,
       isTaken: true, // Установлено в true
       dateTaken: now,
-      plannedReturnDate: now.add(Duration(days: 30)), // Рассчитано
+      plannedReturnDate: null, // Рассчитаю на сервере
       actualReturnDate: null, // Пока книга не возвращена
       takingCount: (takingCount ?? 0) + 1, // Увеличено
       currentReader: reader,

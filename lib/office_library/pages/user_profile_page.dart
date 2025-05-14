@@ -374,7 +374,9 @@ Future<List<Book>> fetchOverdueBooks(String email) async {
     final now = DateTime.now();
     final allBooks = await fetchBooks(email);
     return allBooks.where((book) => 
-      book.plannedReturnDate != null && book.plannedReturnDate!.isBefore(now)
+      book.plannedReturnDate != null 
+      && book.plannedReturnDate!.isBefore(now)
+      && book.actualReturnDate == null
     ).toList();
   }
 }

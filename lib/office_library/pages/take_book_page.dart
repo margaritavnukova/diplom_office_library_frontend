@@ -95,7 +95,7 @@ class _TakeBookDialogState extends State<TakeBookDialog> {
               }
 
               try {
-                final bookTaken = widget.book!.takeBook(_reader!);
+                final bookTaken = widget.book.takeBook(_reader!);
                 
                 final postData = PostData<Book>();
                 await postData.postItem(UriStrings.takeBookUri, bookTaken);

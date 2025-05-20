@@ -84,242 +84,142 @@ class _AddBookPageState extends State<AddBookPage> {
 
   Widget _buildAdminView() {
     return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Row(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: MediaQuery.of(context).size.height,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                   _buildImageSection(),
-                    SizedBox(height: 20),
-                    _buildTextFieldWithIcon(
-                      Icons.title,
-                      'Название книги',
-                      _titleController,
-                    ),
-                  ]
-                ),
-
-                SizedBox(width: 20),
-
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (widget.book?.photoBase64 != null)
-                      Center(
-                        child: Image(
-                          image: widget.book!.coverImage!,
-                          height: 200,
-                          fit: BoxFit.contain,
+              // Адаптивный layout для изображения и полей
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  if (constraints.maxWidth > 600) {
+                    // Горизонтальное расположение на широких экранах
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Изображение с фиксированной шириной
+                        SizedBox(
+                          width: 350,
+                          child: Column(
+                            children: [
+                              _buildImageSection(),
+                              const SizedBox(height: 16),
+                              ElevatedButton(
+                                onPressed: _pickImage,
+                                child: const Text('Загрузить изображение'),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-
-                    SizedBox(height: 20),
-                    _buildTextFieldWithIcon(
-                      Icons.title,
-                      'Название книги',
-                      _titleController,
-                    ),
-                    SizedBox(height: 20),
-
-                    GenericDropdown<Genre>(
-                      futureItems: FetchData.loadData<Genre>(
-                        UriStrings.addControllerName(UriStrings.getUri, 'Genre'),
-                        Genre.fromJson,
-                      ),
-                      onItemSelected: (Genre? genre) => _selectedGenre = genre,
-                      label: widget.book?.genre.name ?? 'Жанр',
-                      icon: Icons.category,
-                    ),
-                    SizedBox(height: 20),
-
-                    GenericDropdown<Author>(
-                      futureItems: FetchData.loadData<Author>(
-                        UriStrings.addControllerName(UriStrings.getUri, 'Author'),
-                        Author.fromJson,
-                      ),
-                      onItemSelected: (Author? author) => _selectedAuthor = author,
-                      label: widget.book?.author.name ?? 'Автор',
-                      icon: Icons.person,
-                    ),
-                    SizedBox(height: 20),
-
-                    _buildTextFieldWithIcon(
-                      Icons.calendar_today,
-                      'Год издания (ГГГГ-ММ-ДД)',
-                      _yearController,
-                      formatters: [yearMaskFormatter],
-                      hintText: '2002-02-02',
-                      keyboardType: TextInputType.number,
-                    ),
-                    SizedBox(height: 30),
-
-                    
-                    _buildActionButton(
-                      Icons.save,
-                      'Сохранить книгу',
-                      Colors.deepPurple,
-                      _saveBook,
-                    ),
-                    
-
-                    if (widget.book != null && 
-                        !widget.book!.isDeleted) ...[
-                      SizedBox(height: 15),
-                      _buildActionButton(
-                        Icons.delete,
-                        'Удалить книгу',
-                        Colors.red,
-                        () => _confirmDelete(context, widget.book!),
-                      ),
-                    ],
-                    
-                    if (widget.book?.isDeleted ?? false) ...[
-                      SizedBox(height: 15),
-                      _buildActionButton(
-                        Icons.restore_from_trash,
-                        'Восстановить книгу',
-                        Colors.green,
-                        () => _confirmRestore(context, widget.book!),
-                      ),
-                    ],
-
-                    if (widget.book != null && 
-                        !widget.book!.isTaken && 
-                        !widget.book!.isDeleted) ...[
-                      SizedBox(height: 15),
-                      _buildActionButton(
-                        Icons.bookmark_add,
-                        'Взять книгу',
-                        Colors.green,
-                        () async {
-                          final result = await Navigator.push<bool>(
-                            context,
-                            MaterialPageRoute(builder: (context) => TakeBookDialog(book: widget.book!)),
-                          );
-                          if (result == true && mounted) {
-                            setState(() {});
-                          }
-                        },
-                      ),
-                    ],
-
-                    if (widget.book != null && 
-                          widget.book!.isTaken && 
-                          widget.book!.currentReader == Auth.user &&
-                          widget.book!.isDeleted) ...[
-                      SizedBox(height: 15),
-                      _buildActionButton(
-                        Icons.bookmark_remove,
-                        'Вернуть книгу',
-                        Colors.blue,
-                        () async {
-                          final result = await Navigator.push<bool>(
-                            context,
-                            MaterialPageRoute(builder: (context) => ReturnBookDialog(book: widget.book!)),
-                          );
-                          if (result == true && mounted) {
-                            setState(() {});
-                          }
-                        },
-                      ),
-                    ],
-                  ],
-                ),
-            ]
-          )
-        ]
-      )
+                        const SizedBox(width: 20),
+                        // Поля ввода с возможностью расширения
+                        Expanded(
+                          child: _buildFieldsColumn(),
+                        ),
+                      ],
+                    );
+                  } else {
+                    // Вертикальное расположение на узких экранах
+                    return Column(
+                      children: [
+                        _buildImageSection(),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: _pickImage,
+                          child: const Text('Загрузить изображение'),
+                        ),
+                        const SizedBox(height: 20),
+                        _buildFieldsColumn(),
+                      ],
+                    );
+                  }
+                },
+              ),
+              const SizedBox(height: 30),
+              // Кнопки действий
+              ..._buildActionButtonsAdmin(),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
   Widget _buildUserView() {
     return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Row(
-            children: [
-              if (widget.book?.photoBase64 != null)
-                Center(
-                  child: // Блок с изображением (1/5 ширины экрана)
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.2,
-                    height: MediaQuery.of(context).size.width * 0.3,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.deepPurple[100],
+  child: Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Column(
+      children: [
+        // Блок с изображением и информацией
+        LayoutBuilder(
+          builder: (context, constraints) {
+            if (constraints.maxWidth > 600) {
+              // Горизонтальное расположение на широких экранах
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Блок с изображением (20% ширины экрана)
+                  if (widget.book?.photoBase64 != null)
+                    SizedBox(
+                      width: constraints.maxWidth * 0.2,
+                      height: constraints.maxWidth * 0.3,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.deepPurple[100],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: _buildBookImage(),
+                        ),
+                      ),
                     ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: _buildBookImage(),
+                  const SizedBox(width: 20),
+                  // Блок с информацией
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: _buildBookInfoCards(),
                     ),
-                  )
-                ),
+                  ),
+                ],
+              );
+            } else {
+              // Вертикальное расположение на узких экранах
+              return Column(
+                children: [
+                  if (widget.book?.photoBase64 != null)
+                    Container(
+                      width: constraints.maxWidth * 0.6,
+                      height: constraints.maxWidth * 0.9,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.deepPurple[100],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: _buildBookImage(),
+                      ),
+                    ),
+                  const SizedBox(height: 20),
+                  ..._buildBookInfoCards(),
+                ],
+              );
+            }
+          },
+        ),
+        // Кнопки действий
+        ..._buildActionButtons(),
+      ],
+    ),
+  ),
+);
 
-                SizedBox(width: 20),
-
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    if (widget.book!.isDeleted)
-                      _buildInfoCard(Icons.assignment_outlined, 'Предупреждение', 'Книга удалена из каталога'),
-
-                      _buildInfoCard(Icons.title, 'Название книги', widget.book?.name),
-                      _buildInfoCard(Icons.category, 'Жанр', widget.book?.genre.name),
-                      _buildInfoCard(Icons.person, 'Автор', widget.book?.author.name),
-                      _buildInfoCard(Icons.calendar_today, 'Год издания', widget.book?.year.toString()),
-                      _buildInfoCard(Icons.event, 'Дата возврата', 
-                                      widget.book?.plannedReturnDate?.toLocal().toString().split(' ')[0] ?? "Нет"),
-                  ]
-                )
-              ],
-            ),
-          if (widget.book != null && 
-              !widget.book!.isTaken && 
-              !widget.book!.isDeleted) ...[
-                SizedBox(height: 20),
-                _buildActionButton(
-                  Icons.bookmark_add,
-                  'Взять книгу',
-                  Colors.green,
-                  () async {
-                    final result = await Navigator.push<bool>(
-                      context,
-                      MaterialPageRoute(builder: (context) => TakeBookDialog(book: widget.book!)),
-                    );
-                    if (result == true && mounted) {
-                      setState(() {});
-                    }
-                  },
-                ),
-              ],
-
-          if (widget.book != null && 
-              widget.book!.isTaken && 
-              widget.book!.currentReader?.email == Auth.user.email && 
-              !widget.book!.isDeleted) ...[
-            SizedBox(height: 20),
-            _buildActionButton(
-              Icons.bookmark_remove,
-              'Вернуть книгу',
-              Colors.blue,
-              () async {
-                final result = await Navigator.push<bool>(
-                  context,
-                  MaterialPageRoute(builder: (context) => ReturnBookDialog(book: widget.book!)),
-                );
-                if (result == true && mounted) {
-                  setState(() {});
-                }
-              },
-            ),
-          ],
-        ]
-      ),
-    );
   }
 
   Widget _buildTextFieldWithIcon(IconData icon, String label, 
@@ -451,7 +351,6 @@ class _AddBookPageState extends State<AddBookPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (!readOnly) _buildImageUploadButton(),
               if (widget.book?.photoBase64 != null || _newImageFile != null)
                 Text(
                   'Обложка книги',
@@ -477,18 +376,6 @@ class _AddBookPageState extends State<AddBookPage> {
           color: Colors.grey[600],
         ),
       ),
-    );
-  }
-
-  Widget _buildImageUploadButton() {
-    return ElevatedButton.icon(
-      icon: Icon(Icons.image),
-      label: Text('Изменить обложку'),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.deepPurple,
-        foregroundColor: Colors.white,
-      ),
-      onPressed: _pickImage,
     );
   }
 
@@ -550,15 +437,69 @@ class _AddBookPageState extends State<AddBookPage> {
     } 
   }
 
-  ImageProvider? _getAvatarImage() {
-    if (_newImageFile != null) {
-      return FileImage(_newImageFile!);
-    } else if (widget.book?.photoBase64 != null) {
-      return MemoryImage(base64Decode(widget.book!.photoBase64!));
-    } else {
-      return AssetImage('assets/images/default_avatar.png');
-    }
+  // Отдельный метод для построения карточек с информацией
+List<Widget> _buildBookInfoCards() {
+  return [
+    if (widget.book?.isDeleted ?? false)
+      _buildInfoCard(Icons.assignment_outlined, 'Предупреждение', 'Книга удалена из каталога'),
+    _buildInfoCard(Icons.title, 'Название книги', widget.book?.name),
+    _buildInfoCard(Icons.category, 'Жанр', widget.book?.genre.name),
+    _buildInfoCard(Icons.person, 'Автор', widget.book?.author.name),
+    _buildInfoCard(Icons.calendar_today, 'Год издания', widget.book?.year.toString()),
+    _buildInfoCard(Icons.event, 'Дата возврата', 
+      widget.book?.plannedReturnDate?.toLocal().toString().split(' ')[0] ?? "Нет"),
+  ];
+}
+
+// Отдельный метод для построения кнопок действий
+List<Widget> _buildActionButtons() {
+  final buttons = <Widget>[];
+  
+  if (widget.book != null && !widget.book!.isTaken && !widget.book!.isDeleted) {
+    buttons.addAll([
+      const SizedBox(height: 20),
+      _buildActionButton(
+        Icons.bookmark_add,
+        'Взять книгу',
+        Colors.green,
+        () async {
+          final result = await Navigator.push<bool>(
+            context,
+            MaterialPageRoute(builder: (context) => TakeBookDialog(book: widget.book!)),
+          );
+          if (result == true && mounted) {
+            setState(() {});
+          }
+        },
+      ),
+    ]);
   }
+
+  if (widget.book != null && 
+      widget.book!.isTaken && 
+      widget.book!.currentReader?.email == Auth.user.email && 
+      !widget.book!.isDeleted) {
+    buttons.addAll([
+      const SizedBox(height: 20),
+      _buildActionButton(
+        Icons.bookmark_remove,
+        'Вернуть книгу',
+        Colors.blue,
+        () async {
+          final result = await Navigator.push<bool>(
+            context,
+            MaterialPageRoute(builder: (context) => ReturnBookDialog(book: widget.book!)),
+          );
+          if (result == true && mounted) {
+            setState(() {});
+          }
+        },
+      ),
+    ]);
+  }
+
+  return buttons;
+}
 
   Future<Response> delete(Book book) async {
   try {
@@ -724,5 +665,132 @@ Future<void> _confirmRestore(BuildContext context, Book bookToRestore) async {
       }
     }
   }
+}
+
+
+// Отдельный метод для построения колонки с полями ввода
+Widget _buildFieldsColumn() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      _buildTextFieldWithIcon(
+        Icons.title,
+        'Название книги',
+        _titleController,
+      ),
+      const SizedBox(height: 20),
+      GenericDropdown<Genre>(
+        futureItems: FetchData.loadData<Genre>(
+          UriStrings.addControllerName(UriStrings.getUri, 'Genre'),
+          Genre.fromJson,
+        ),
+        onItemSelected: (Genre? genre) => _selectedGenre = genre,
+        label: widget.book?.genre.name ?? 'Жанр',
+        icon: Icons.category,
+      ),
+      const SizedBox(height: 20),
+      GenericDropdown<Author>(
+        futureItems: FetchData.loadData<Author>(
+          UriStrings.addControllerName(UriStrings.getUri, 'Author'),
+          Author.fromJson,
+        ),
+        onItemSelected: (Author? author) => _selectedAuthor = author,
+        label: widget.book?.author.name ?? 'Автор',
+        icon: Icons.person,
+      ),
+      const SizedBox(height: 20),
+      _buildTextFieldWithIcon(
+        Icons.calendar_today,
+        'Год издания (ГГГГ-ММ-ДД)',
+        _yearController,
+        formatters: [yearMaskFormatter],
+        hintText: '2002-02-02',
+        keyboardType: TextInputType.number,
+      ),
+    ],
+  );
+}
+
+// Отдельный метод для построения кнопок действий
+List<Widget> _buildActionButtonsAdmin() {
+  final buttons = <Widget>[];
+  
+  buttons.add(
+    _buildActionButton(
+      Icons.save,
+      'Сохранить книгу',
+      Colors.deepPurple,
+      _saveBook,
+    ),
+  );
+
+  if (widget.book != null && !widget.book!.isDeleted) {
+    buttons.addAll([
+      const SizedBox(height: 15),
+      _buildActionButton(
+        Icons.delete,
+        'Удалить книгу',
+        Colors.red,
+        () => _confirmDelete(context, widget.book!),
+      ),
+    ]);
+  }
+  
+  if (widget.book?.isDeleted ?? false) {
+    buttons.addAll([
+      const SizedBox(height: 15),
+      _buildActionButton(
+        Icons.restore_from_trash,
+        'Восстановить книгу',
+        Colors.green,
+        () => _confirmRestore(context, widget.book!),
+      ),
+    ]);
+  }
+
+  if (widget.book != null && !widget.book!.isTaken && !widget.book!.isDeleted) {
+    buttons.addAll([
+      const SizedBox(height: 15),
+      _buildActionButton(
+        Icons.bookmark_add,
+        'Взять книгу',
+        Colors.green,
+        () async {
+          final result = await Navigator.push<bool>(
+            context,
+            MaterialPageRoute(builder: (context) => TakeBookDialog(book: widget.book!)),
+          );
+          if (result == true && mounted) {
+            setState(() {});
+          }
+        },
+      ),
+    ]);
+  }
+
+  if (widget.book != null && 
+      widget.book!.isTaken && 
+      widget.book!.currentReader == Auth.user &&
+      !widget.book!.isDeleted) {
+    buttons.addAll([
+      const SizedBox(height: 15),
+      _buildActionButton(
+        Icons.bookmark_remove,
+        'Вернуть книгу',
+        Colors.blue,
+        () async {
+          final result = await Navigator.push<bool>(
+            context,
+            MaterialPageRoute(builder: (context) => ReturnBookDialog(book: widget.book!)),
+          );
+          if (result == true && mounted) {
+            setState(() {});
+          }
+        },
+      ),
+    ]);
+  }
+
+  return buttons;
 }
 }

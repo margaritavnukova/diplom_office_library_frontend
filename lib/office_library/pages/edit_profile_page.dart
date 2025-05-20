@@ -1,12 +1,7 @@
-import 'dart:io';
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-
-import '../assets/strings.dart';
-import '../classes/fetch_data.dart';
-import '../classes/put_data.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import '../classes/reader_class.dart';
+import '../classes/edit_profile_page_methods.dart';
 
 class EditProfilePage extends StatefulWidget {
   final Reader reader;
@@ -18,84 +13,29 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  late TextEditingController _nameController;
-  late TextEditingController _emailController;
-  late TextEditingController _phoneController;
-  File? _newImageFile;
-  bool _isLoading = false;
-  late Future<Reader> _userFuture;
+  late EditProfileBloc _bloc;
+
+  // Создаем маску для ввода номера в формате "+7(999)999-99-99"
+  final phoneMaskFormatter = MaskTextInputFormatter(
+    mask: '+7(###)###-##-##',
+    filter: {"#": RegExp(r'[0-9]')}, // Разрешаем ввод только цифр
+  );
 
   @override
   void initState() {
     super.initState();
-    _userFuture = fetch();
-    _initializeControllers();
-  }
-
-  Future<void> _initializeControllers() async {
-    final userToEdit = await _userFuture;
-    setState(() {
-      _nameController = TextEditingController(text: userToEdit.name);
-      _emailController = TextEditingController(text: userToEdit.email);
-      _phoneController = TextEditingController(text: userToEdit.phoneNumber);
-    });
-  }
-
-  Future<Reader> fetch() async {
-    var fetchData = FetchData<Reader>(Reader.fromJson);
-    var editedEmail = widget.reader.email.replaceAll('.', '-');
-    return await fetchData.fetchOne(
-      UriStrings.getOneUserByEmailUri + editedEmail
-    );
+    _bloc = EditProfileBloc(reader: widget.reader);
   }
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
+    _bloc.dispose();
     super.dispose();
   }
 
-  Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-      maxWidth: 800,
-      maxHeight: 800,
-      imageQuality: 85,
-    );
-
-    if (pickedFile != null) {
-      setState(() {
-        _newImageFile = File(pickedFile.path);
-      });
-    }
-  }
-
   Future<void> _saveChanges() async {
-    if (_isLoading) return;
-    
-    setState(() => _isLoading = true);
-
     try {
-      String? imageBase64;
-      if (_newImageFile != null) {
-        final bytes = await _newImageFile!.readAsBytes();
-        imageBase64 = base64Encode(bytes);
-      }
-
-      final readerEdited = Reader(
-        id: widget.reader.id, 
-        email: _emailController.text,
-        name: _nameController.text,
-        phoneNumber: _phoneController.text,
-        role: widget.reader.role,
-        registrationDate: widget.reader.registrationDate,
-        photoBase64: imageBase64 ?? widget.reader.photoBase64,
-      );
-      
-      final updatedReader = await put(readerEdited);
-      
+      final updatedReader = await _bloc.saveChanges();
       if (!mounted) return;
       
       Navigator.pop(context, updatedReader);
@@ -110,13 +50,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ),
       );
       
-      // Возвращаем null в случае ошибки
       Navigator.pop(context, null);
-      
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
     }
   }
 
@@ -124,18 +58,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Редактирование профиля'),
+        title: const Text('Редактирование профиля'),
         actions: [
           IconButton(
-            icon: Icon(Icons.save),
-            onPressed: _isLoading ? null : _saveChanges,
+            icon: const Icon(Icons.save),
+            onPressed: _bloc.isLoading ? null : _saveChanges,
           ),
         ],
       ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+      body: _bloc.isLoading
+          ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
                   // Аватар и кнопка смены фото
@@ -145,7 +79,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         CircleAvatar(
                           radius: 60,
                           backgroundColor: Colors.grey[200],
-                          backgroundImage: _getAvatarImage(),
+                          backgroundImage: _bloc.getAvatarImage(),
                         ),
                         Positioned(
                           bottom: 0,
@@ -156,57 +90,59 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               shape: BoxShape.circle,
                             ),
                             child: IconButton(
-                              icon: Icon(Icons.camera_alt, color: Colors.white),
-                              onPressed: _pickImage,),
+                              icon: const Icon(Icons.camera_alt, color: Colors.white),
+                              onPressed: _bloc.pickImage,
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   
                   // Поля для редактирования
                   TextFormField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
+                    controller: _bloc.nameController,
+                    decoration: const InputDecoration(
                       labelText: 'Имя',
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.person),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   
                   TextFormField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
+                    controller: _bloc.emailController,
+                    decoration: const InputDecoration(
                       labelText: 'Email',
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.email),
                     ),
-                    readOnly: true, // Email обычно нельзя менять
+                    readOnly: true,
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   
                   TextFormField(
-                    controller: _phoneController,
-                    decoration: InputDecoration(
+                    controller: _bloc.phoneController,
+                    inputFormatters: [phoneMaskFormatter],
+                    decoration: const InputDecoration(
                       labelText: 'Телефон',
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.phone),
                     ),
                     keyboardType: TextInputType.phone,
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   
                   // Кнопка сохранения
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: _isLoading ? null : _saveChanges,
+                      onPressed: _bloc.isLoading ? null : _saveChanges,
                       style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(vertical: 16),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Сохранить изменения',
                         style: TextStyle(fontSize: 16),
                       ),
@@ -217,19 +153,4 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
     );
   }
-
-  ImageProvider? _getAvatarImage() {
-    if (_newImageFile != null) {
-      return FileImage(_newImageFile!);
-    } else if (widget.reader.photoBase64 != null) {
-      return MemoryImage(base64Decode(widget.reader.photoBase64!));
-    } else {
-      return AssetImage('assets/images/default_avatar.png');
-    }
-  }
-}
-
-Future<Reader> put(Reader reader) async {
-  final putData = PutData<Reader>(Reader.fromJson);
-  return await putData.putItem(UriStrings.addControllerName(UriStrings.putByIdUri, 'User'), reader);
 }

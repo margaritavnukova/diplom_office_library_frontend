@@ -6,12 +6,14 @@ class Author implements Item {
   @override String? name;
   final String? lifetime;
   final String? country;
+  final String? photoBase64;
 
   Author({
     this.id = "",
     required this.name,
     this.country,
     this.lifetime,
+    this.photoBase64
   });
 
   @override
@@ -21,6 +23,7 @@ class Author implements Item {
       name: json[AuthorJsonKeys.name],
       lifetime: json[AuthorJsonKeys.lifetime],
       country: json[AuthorJsonKeys.country],
+      photoBase64: json[UserJsonKeys.photoBase64],
     );
   }
 
@@ -29,8 +32,9 @@ class Author implements Item {
     return {
       AuthorJsonKeys.id: id,
       AuthorJsonKeys.name: name,
-      AuthorJsonKeys.country: country,
-      AuthorJsonKeys.lifetime: lifetime,
+      AuthorJsonKeys.country: country ?? "Страна неизвестна",
+      AuthorJsonKeys.lifetime: lifetime ?? "Время жизни неизвестно",
+      UserJsonKeys.photoBase64: photoBase64,
     };
   }
 

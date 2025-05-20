@@ -29,11 +29,17 @@ class MyMainPageState extends State<MyMainPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.purpleAccent,
-        title: Text("Главная страница"),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.auto_stories_rounded, size: 28), // Иконка книги
+            SizedBox(width: 10), // Отступ между иконкой и текстом
+            Text(Auth.hasRole('Admin') ? "Приложение для буккроссинга (администрирование)" : "Приложение для буккроссинга", style: TextStyle(fontFamily: "Bookman old style")),
+          ],
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.logout),
@@ -75,15 +81,11 @@ class MyMainPageState extends State<MyMainPage> {
             label: "Профиль",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.book),
+            icon: Icon(Icons.auto_stories_outlined),
             label: "Ваши книги",
           ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.qr_code),
-          //   label: "Добавить книгу через QR-код",
-          //   ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.queue),
+            icon: Icon(Icons.auto_awesome_motion_outlined), //amp_stories_outlined, auto_awesome_motion_outlined
             label: "Книги библиотеки",
           ),
         ],

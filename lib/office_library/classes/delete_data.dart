@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import 'package:path/path.dart';
 import '../classes/item_base_class.dart'; 
 
@@ -9,7 +11,7 @@ class DeleteData<T extends Item> {
   DeleteData(this.fromJson);
 
   // Функция для добавления нового элемента 
-  Future<void> deleteItem(String baseUri, String bookId) async {
+  Future<Response> deleteItem(String baseUri, String bookId) async {
     final uri = join(baseUri);
 
     final response = await http.delete(
@@ -25,7 +27,9 @@ class DeleteData<T extends Item> {
     if (response.statusCode == 204) {
       print('Item deleted successfully');
     } else {
-      throw Exception('Failed to delete item: ${response.body}');
+      SnackBar(content: Text('Failed to delete item: ${response.body}'));
     }
+
+    return response;
   }
 }

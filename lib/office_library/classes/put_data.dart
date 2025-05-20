@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import '../classes/item_base_class.dart'; 
 
 class PutData<T extends Item> {
@@ -7,7 +8,7 @@ class PutData<T extends Item> {
   PutData(this.fromJson);
 
   // Функция для добавления нового элемента 
-  Future<T> putItem(String uri, T item) async {
+  Future<Response> putItem(String uri, T item) async {
     final response = await http.put(
       Uri.parse(uri),
       headers: <String, String>{
@@ -20,7 +21,7 @@ class PutData<T extends Item> {
 
     if (response.statusCode / 100 < 3) {
       print('Item edited successfully');
-      return jsonDecode(response.body);
+      return response;
     } else {
       throw Exception('Failed to add item: ${response.body}');
     }

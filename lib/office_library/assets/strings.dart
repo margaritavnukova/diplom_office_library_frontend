@@ -3,6 +3,8 @@ class UriStrings {
 
   static const getBooksByReaderUri = '$address/api/Book/GetByReader/';
   static const getOneUserByEmailUri = '$address/api/User/GetByEmail/';
+  static const getSearchResults = '$address/api/Book/Search';
+
   static const takeBookUri = '$address/api/UserBookHistory/RegisterBookTaking';
   static const returnBookUri = '$address/api/UserBookHistory/RegisterBookReturning';
 
@@ -50,6 +52,7 @@ class BookJsonKeys {
   static const author = 'Author';
   static const title = 'Title';
   static const genre = 'Genre';
+  static const isDeleted = 'IsDeleted';
   static const year = 'Year';
   static const readers = 'Readers';
   static const isTaken = 'IsTaken';

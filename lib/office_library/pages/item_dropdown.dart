@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-
 import '../classes/item_base_class.dart';
 
 class GenericDropdown<T extends Item> extends StatefulWidget {
   final Future<List<T>> futureItems;
   final Function(T?) onItemSelected;
   final String label;
+  final IconData icon; // Изменено с Icon? на IconData для простоты использования
 
   GenericDropdown({
     required this.futureItems,
     required this.onItemSelected,
     required this.label,
+    this.icon = Icons.arrow_drop_down, // Иконка по умолчанию
   });
 
   @override
@@ -26,31 +27,58 @@ class _GenericDropdownState<T extends Item> extends State<GenericDropdown<T>> {
       future: widget.futureItems,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Индикатор загрузки
+          return CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text('Ошибка: ${snapshot.error}');
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return Text('Нет данных');
         } else {
-          final items = snapshot.data!.toSet().toList(); // Удаляем дубликаты
+          final items = snapshot.data!.toSet().toList();
 
-          return DropdownButtonFormField<T>(
-            value: _selectedItem != null && items.contains(_selectedItem)
-                ? _selectedItem
-                : null, // Если значение не найдено, устанавливаем null
-            onChanged: (T? newValue) {
-              setState(() {
-                _selectedItem = newValue;
-              });
-              widget.onItemSelected(newValue); // Передаем выбранный элемент
-            },
-            items: items.map<DropdownMenuItem<T>>((T item) {
-              return DropdownMenuItem<T>(
-                value: item,
-                child: Text(item.name ?? "Нет имени"), // Используем свойство name из Item
-              );
-            }).toList(),
-            decoration: InputDecoration(labelText: widget.label),
+          return InputDecorator(
+            decoration: InputDecoration(
+              labelText: widget.label,
+              prefixIcon: Icon(widget.icon), // Добавляем иконку слева
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<T>(
+                isExpanded: true,
+                value: _selectedItem != null && items.contains(_selectedItem)
+                    ? _selectedItem
+                    : null,
+                onChanged: (T? newValue) {
+                  setState(() {
+                    _selectedItem = newValue;
+                  });
+                  widget.onItemSelected(newValue);
+                },
+                items: items.map<DropdownMenuItem<T>>((T item) {
+                  return DropdownMenuItem<T>(
+                    value: item,
+                    child: Row(
+                      children: [
+                        Icon(Icons.check, color: Colors.transparent), // Для выравнивания
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            item.name ?? "Нет имени",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                icon: Icon(Icons.arrow_drop_down), // Иконка справа
+                hint: Text(
+                  'Выберите ${widget.label.toLowerCase()}',
+                  style: TextStyle(color: Colors.grey[600]),
+                ),
+              ),
+            ),
           );
         }
       },
